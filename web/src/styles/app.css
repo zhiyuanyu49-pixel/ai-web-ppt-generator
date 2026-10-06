@@ -428,6 +428,27 @@ body {
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
 }
 
+/* 页头的模型徽标：供应商名 + 实际模型，用分隔点区分层级 */
+.chip--model {
+  gap: 7px;
+}
+
+.chip--model .chip__provider {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.chip--model .chip__sep {
+  color: var(--muted);
+  opacity: 0.55;
+  margin: 0 -1px;
+}
+
+.chip--model .chip__model {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
 /* --------------------------- 进度面板 --------------------------- */
 .progress-panel {
   min-height: 320px;

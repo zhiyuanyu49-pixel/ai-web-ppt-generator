@@ -167,6 +167,12 @@ export default function App() {
     showToast(ok ? '已复制 deck JSON' : '复制失败，请手动下载 JSON');
   }, [deck, showToast]);
 
+  // 当前选中供应商的展示名（页头徽标与下拉保持一致）
+  const activeProviderLabel = useMemo(() => {
+    const found = health?.providers?.find((item) => item.id === provider);
+    return found?.label ?? provider;
+  }, [health, provider]);
+
   const currentSlides = deck?.slides ?? slides;
 
   // Ctrl/Cmd + Enter 触发生成
@@ -197,11 +203,27 @@ export default function App() {
         <div className="app__header-right">
           {health && (
             <span
-              className={`chip ${health.mock ? 'chip--warn' : 'chip--ok'}`}
-              title={`base_url: ${health.baseUrl}\n请求模型: ${health.requestedModel}\n实际模型: ${health.resolvedModel}\n匹配方式: ${health.matchedBy}`}
+              className={`chip chip--model ${health.mock ? 'chip--warn' : 'chip--ok'}`}
+              title={
+                `供应商: ${activeProviderLabel}\n` +
+                `base_url: ${health.baseUrl}\n` +
+                `请求模型: ${health.requestedModel}\n` +
+                `实际模型: ${health.resolvedModel}\n` +
+                `匹配方式: ${health.matchedBy}`
+              }
             >
               <span className="dot" aria-hidden="true" />
-              {health.mock ? 'MOCK 模式' : health.resolvedModel}
+              {health.mock ? (
+                'MOCK 模式'
+              ) : (
+                <>
+                  <span className="chip__provider">{activeProviderLabel}</span>
+                  <span className="chip__sep" aria-hidden="true">
+                    ·
+                  </span>
+                  <span className="chip__model">{health.resolvedModel}</span>
+                </>
+              )}
             </span>
           )}
           <div className="theme-picker" role="group" aria-label="配色主题">
