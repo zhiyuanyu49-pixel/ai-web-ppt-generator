@@ -74,7 +74,7 @@ node test/demo-case.mjs   # 用真实模型跑通「校园咖啡店创业计划�
 | --- | --- | --- | --- |
 | DeepSeek | `DEEPSEEK_` | `https://api.deepseek.com/v1` | `deepseek-flash` |
 | 智谱 GLM | `ZHIPU_` | `https://open.bigmodel.cn/api/paas/v4` | `glm-4.7` |
-| Kimi | `KIMI_` | `https://api.moonshot.cn/v1` | `kimi-k2.5` |
+| Kimi | `KIMI_` | `https://api.moonshot.cn/v1` | `kimi-k2.6` |
 
 每家需要三个变量：`*_API_KEY`、`*_BASE_URL`、`*_MODEL`（后两个可省略，会用上表的默认值）。
 配了几家，下拉里就出现几家；没配 Key 的会标注缺失的环境变量名并置灰。

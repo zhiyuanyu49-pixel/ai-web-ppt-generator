@@ -35,10 +35,10 @@ export const PROVIDER_DEFS = {
     defaultBaseUrl: 'https://api.deepseek.com/v1',
     defaultModel: 'deepseek-flash',
     docsUrl: 'https://platform.deepseek.com/api_keys',
+    // 以下 id 为 2026-10 实测可用；若账号未开放某个模型，/models 会不予返回
     models: [
-      { id: 'deepseek-flash', name: 'DeepSeek Flash', note: '速度快、成本低，日常首选' },
-      { id: 'deepseek-chat', name: 'DeepSeek Chat', note: '通用能力均衡' },
-      { id: 'deepseek-reasoner', name: 'DeepSeek Reasoner', note: '深度推理，结构更严谨' },
+      { id: 'deepseek-flash', name: 'DeepSeek Flash', note: 'V4.1-Flash，快且便宜，日常首选' },
+      { id: 'deepseek-v4-pro', name: 'DeepSeek V4 Pro', note: '能力更强，适合复杂结构' },
     ],
   },
 
@@ -54,9 +54,10 @@ export const PROVIDER_DEFS = {
     docsUrl: 'https://open.bigmodel.cn/usercenter/apikeys',
     models: [
       { id: 'glm-4.7', name: 'GLM-4.7', note: '性价比好，推荐' },
-      { id: 'glm-4.6', name: 'GLM-4.6', note: '旗舰，推理与工具能力强' },
+      { id: 'glm-5.3', name: 'GLM-5.3', note: '最新旗舰' },
+      { id: 'glm-5.3-flash', name: 'GLM-5.3 Flash', note: '快速经济' },
+      { id: 'glm-4.6', name: 'GLM-4.6', note: '推理与工具能力强' },
       { id: 'glm-4.5-air', name: 'GLM-4.5-Air', note: '轻量快速' },
-      { id: 'glm-4-flash', name: 'GLM-4-Flash', note: '有免费额度' },
     ],
   },
 
@@ -68,13 +69,12 @@ export const PROVIDER_DEFS = {
     modelEnv: 'KIMI_MODEL',
     // 国内端：api.moonshot.cn；国际端：api.moonshot.ai，路径一致
     defaultBaseUrl: 'https://api.moonshot.cn/v1',
-    defaultModel: 'kimi-k2.5',
+    defaultModel: 'kimi-k2.6',
     docsUrl: 'https://platform.moonshot.cn/console/api-keys',
+    // Kimi 各账号开放范围不同，这里按通用场景列出；跑 npm run test:live 可核对实际可用项
     models: [
-      { id: 'kimi-k2.5', name: 'Kimi K2.5', note: '旗舰模型，复杂任务首选' },
-      { id: 'kimi-latest', name: 'Kimi Latest', note: '始终跟随最新 Kimi 模型' },
-      { id: 'moonshot-v1-128k', name: 'Moonshot v1 · 128K', note: '长文档处理' },
-      { id: 'moonshot-v1-32k', name: 'Moonshot v1 · 32K', note: '中等长度任务' },
+      { id: 'kimi-k2.6', name: 'Kimi K2.6', note: '旗舰通用模型，推荐' },
+      { id: 'kimi-k2.7-code', name: 'Kimi K2.7 Code', note: '偏代码与工程任务' },
     ],
   },
 };
