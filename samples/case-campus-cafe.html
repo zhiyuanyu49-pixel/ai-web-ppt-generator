@@ -1,0 +1,1615 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-export="ai-web-ppt">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="generator" content="AI 网页 PPT 生成器" />
+<meta name="description" content="面向大学城 5.2 万在校生的自习型咖啡空间" />
+<title>「第三空间」校园咖啡店创业计划书</title>
+<style>
+/* ---------- 主题变量 ---------- */
+[data-theme="midnight"] {
+  --bg: #070b18;
+  --bg-soft: #0d1428;
+  --slide-bg: radial-gradient(120% 120% at 12% 0%, #1b2a5e 0%, #0b1226 45%, #05070f 100%);
+  --fg: #eef3ff;
+  --muted: #9fb0d4;
+  --accent: #6ea8fe;
+  --accent-2: #a78bfa;
+  --card: rgba(255,255,255,0.06);
+  --border: rgba(255,255,255,0.14);
+  --shadow: 0 30px 80px rgba(0,0,0,0.55);
+  --grid: rgba(110,168,254,0.10);
+  color-scheme: dark;
+}
+
+[data-theme="paper"] {
+  --bg: #eef1f6;
+  --bg-soft: #ffffff;
+  --slide-bg: linear-gradient(160deg, #ffffff 0%, #f4f7fd 60%, #e9eff9 100%);
+  --fg: #12192b;
+  --muted: #5a6580;
+  --accent: #2563eb;
+  --accent-2: #0ea5e9;
+  --card: rgba(37,99,235,0.06);
+  --border: rgba(18,25,43,0.12);
+  --shadow: 0 24px 60px rgba(23,42,84,0.18);
+  --grid: rgba(37,99,235,0.08);
+  color-scheme: light;
+}
+
+[data-theme="ocean"] {
+  --bg: #04141a;
+  --bg-soft: #0a2029;
+  --slide-bg: radial-gradient(120% 120% at 85% 10%, #0e4a52 0%, #062029 50%, #020c11 100%);
+  --fg: #e8feff;
+  --muted: #8fc9cf;
+  --accent: #22d3ee;
+  --accent-2: #34d399;
+  --card: rgba(34,211,238,0.08);
+  --border: rgba(232,254,255,0.16);
+  --shadow: 0 30px 80px rgba(0,0,0,0.5);
+  --grid: rgba(34,211,238,0.12);
+  color-scheme: dark;
+}
+
+[data-theme="sunset"] {
+  --bg: #170a12;
+  --bg-soft: #26101d;
+  --slide-bg: radial-gradient(130% 120% at 10% 0%, #6d1b3c 0%, #33122b 48%, #150711 100%);
+  --fg: #fff3ec;
+  --muted: #e3b6bd;
+  --accent: #fb7185;
+  --accent-2: #fbbf24;
+  --card: rgba(251,113,133,0.10);
+  --border: rgba(255,243,236,0.18);
+  --shadow: 0 30px 80px rgba(0,0,0,0.55);
+  --grid: rgba(251,113,133,0.12);
+  color-scheme: dark;
+}
+
+[data-theme="forest"] {
+  --bg: #e9f1ea;
+  --bg-soft: #ffffff;
+  --slide-bg: linear-gradient(155deg, #ffffff 0%, #f1f8f0 55%, #e3efe4 100%);
+  --fg: #0f2417;
+  --muted: #4b6a55;
+  --accent: #15803d;
+  --accent-2: #0d9488;
+  --card: rgba(21,128,61,0.07);
+  --border: rgba(15,36,23,0.12);
+  --shadow: 0 24px 60px rgba(19,64,40,0.18);
+  --grid: rgba(21,128,61,0.09);
+  color-scheme: light;
+}
+
+[data-theme="graphite"] {
+  --bg: #0b0b0c;
+  --bg-soft: #151517;
+  --slide-bg: linear-gradient(150deg, #1c1c1f 0%, #101012 55%, #08080a 100%);
+  --fg: #f4f4f5;
+  --muted: #a1a1aa;
+  --accent: #e5e7eb;
+  --accent-2: #9ca3af;
+  --card: rgba(255,255,255,0.05);
+  --border: rgba(255,255,255,0.16);
+  --shadow: 0 30px 80px rgba(0,0,0,0.6);
+  --grid: rgba(255,255,255,0.07);
+  color-scheme: dark;
+}
+
+/* ---------- 基础变量 ---------- */
+:root {
+  --font-sans: system-ui, -apple-system, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+  --font-display: 'Segoe UI Semibold', system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+  --font-mono: ui-monospace, 'Cascadia Mono', SFMono-Regular, Consolas, monospace;
+}
+
+/* ---------- 幻灯片样式 ---------- */
+/* ==================================================================
+   幻灯片视觉样式（站内演示 + 独立 HTML 导出 共用）
+   仅依赖 [data-theme] 上的 CSS 变量，主题切换无需重新渲染 DOM。
+   ================================================================== */
+
+.deck-viewport {
+  container-type: size;
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: clamp(0px, 1.2vmin, 20px);
+  box-sizing: border-box;
+}
+
+/* 16:9 舞台：优先用容器查询单位，老浏览器回退到 vw/vh */
+.stage {
+  position: relative;
+  width: min(96vw, 96vh * 16 / 9);
+  aspect-ratio: 16 / 9;
+  container-type: size;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--slide-bg);
+  color: var(--fg);
+  box-shadow: var(--shadow);
+  transition:
+    background 0.4s ease,
+    color 0.3s ease;
+}
+
+@supports (width: 1cqw) {
+  .stage {
+    width: min(100cqw, 100cqh * 16 / 9);
+  }
+}
+
+/* 内缩播放模式（站内演示不占满屏时留白） */
+.stage[data-inset='true'] {
+  border-radius: 18px;
+}
+
+/* ------------------------------ 单页 ------------------------------ */
+.slide {
+  --k: 1;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2.6cqw;
+  padding: 5.4cqw 6cqw 4.4cqw;
+  box-sizing: border-box;
+  background: var(--slide-bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transform: translate3d(0, 1.2%, 0) scale(0.995);
+  transition:
+    opacity 0.42s cubic-bezier(0.22, 0.61, 0.36, 1),
+    transform 0.42s cubic-bezier(0.22, 0.61, 0.36, 1),
+    visibility 0.42s;
+}
+
+/* 网格氛围光 */
+.slide::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 6cqw 6cqw;
+  mask-image: radial-gradient(120% 90% at 90% 0%, #000 0%, transparent 70%);
+  -webkit-mask-image: radial-gradient(120% 90% at 90% 0%, #000 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.slide.is-active {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+/* 打印 / 导出长图时：全部可见并顺序排布 */
+.deck[data-mode='flow'] .stage,
+body.is-print .stage {
+  container-type: normal;
+  width: 100%;
+  height: auto;
+  aspect-ratio: auto;
+  display: block;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.deck[data-mode='flow'] .slide,
+body.is-print .slide {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  container-type: size;
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+.slide[data-density='compact'] {
+  --k: 0.87;
+}
+
+.slide[data-density='dense'] {
+  --k: 0.76;
+}
+
+/* ---------------------------- 头部 ---------------------------- */
+.slide__head {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: calc(1.1cqw * var(--k));
+  flex: 0 0 auto;
+}
+
+.slide__eyebrow {
+  margin: 0;
+  font-size: calc(1.5cqw * var(--k));
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.slide__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: calc(4.3cqw * var(--k));
+  line-height: 1.14;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.slide__subtitle {
+  margin: 0;
+  font-size: calc(2.05cqw * var(--k));
+  line-height: 1.5;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+
+/* ---------------------------- 主体 ---------------------------- */
+.slide__body {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+}
+
+.slide__bullets {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: calc(1.5cqw * var(--k));
+  width: 100%;
+}
+
+.slide__bullets li {
+  position: relative;
+  padding-left: calc(3.1cqw * var(--k));
+  font-size: calc(2.1cqw * var(--k));
+  line-height: 1.5;
+  color: var(--fg);
+  text-wrap: pretty;
+}
+
+.slide__bullets li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: calc(0.85cqw * var(--k));
+  width: calc(1.35cqw * var(--k));
+  height: calc(1.35cqw * var(--k));
+  border-radius: 30% 70% 62% 38% / 45% 40% 60% 55%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: 0 0 0 calc(0.35cqw * var(--k)) var(--card);
+}
+
+.slide__bullets li strong {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.slide__column-title {
+  margin: 0 0 calc(1.4cqw * var(--k));
+  font-size: calc(2.3cqw * var(--k));
+  font-weight: 700;
+  color: var(--accent);
+}
+
+/* -------------------------- 两栏布局 -------------------------- */
+.slide__columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  gap: calc(2.6cqw * var(--k));
+  width: 100%;
+  align-items: start;
+}
+
+.slide__column {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 1.2cqw;
+  padding: calc(2cqw * var(--k)) calc(2.2cqw * var(--k));
+}
+
+/* -------------------------- 数据布局 -------------------------- */
+.slide__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  gap: calc(2cqw * var(--k));
+  width: 100%;
+  text-align: center;
+}
+
+.slide__stat {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 1.2cqw;
+  padding: calc(2.4cqw * var(--k)) calc(1.4cqw * var(--k));
+}
+
+.slide__stat-value {
+  font-family: var(--font-display);
+  font-size: calc(4.6cqw * var(--k));
+  font-weight: 800;
+  line-height: 1.05;
+  background: linear-gradient(120deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.slide__stat-label {
+  margin-top: calc(0.9cqw * var(--k));
+  font-size: calc(1.55cqw * var(--k));
+  color: var(--muted);
+}
+
+/* --------------------------- 时间轴 --------------------------- */
+.slide__timeline {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: calc(1.5cqw * var(--k));
+  width: 100%;
+  counter-reset: tl;
+}
+
+.slide__timeline-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: calc(9cqw * var(--k)) 1fr;
+  gap: calc(1.6cqw * var(--k));
+  align-items: baseline;
+  padding-left: calc(2.4cqw * var(--k));
+}
+
+.slide__timeline-item::before {
+  content: '';
+  position: absolute;
+  left: calc(0.6cqw * var(--k));
+  top: calc(1.4cqw * var(--k));
+  bottom: calc(-1.5cqw * var(--k));
+  width: 1px;
+  background: var(--border);
+}
+
+.slide__timeline-item:last-child::before {
+  display: none;
+}
+
+.slide__timeline-dot {
+  position: absolute;
+  left: 0;
+  top: calc(0.75cqw * var(--k));
+  width: calc(1.3cqw * var(--k));
+  height: calc(1.3cqw * var(--k));
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.slide__timeline-time {
+  font-size: calc(1.75cqw * var(--k));
+  font-weight: 700;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.slide__timeline-text {
+  font-size: calc(1.9cqw * var(--k));
+  line-height: 1.45;
+}
+
+/* ---------------------------- 引用 ---------------------------- */
+.slide__quote {
+  margin: 0;
+  max-width: 88%;
+}
+
+.slide__quote-text {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: calc(3.4cqw * var(--k));
+  line-height: 1.4;
+  font-weight: 600;
+  text-wrap: balance;
+}
+
+.slide__quote-text::before {
+  content: '“';
+  color: var(--accent);
+}
+
+.slide__quote-text::after {
+  content: '”';
+  color: var(--accent);
+}
+
+.slide__quote-author {
+  margin-top: calc(2cqw * var(--k));
+  font-size: calc(1.8cqw * var(--k));
+  color: var(--muted);
+}
+
+/* ---------------------- 封面 / 章节 / 结尾 ---------------------- */
+.slide[data-layout='cover'],
+.slide[data-layout='closing'],
+.slide[data-layout='section'] {
+  justify-content: center;
+}
+
+.slide[data-layout='cover'] .slide__title,
+.slide[data-layout='closing'] .slide__title {
+  font-size: calc(6.6cqw * var(--k));
+  line-height: 1.08;
+}
+
+.slide[data-layout='section'] .slide__title {
+  font-size: calc(5.4cqw * var(--k));
+}
+
+.slide[data-layout='cover'] .slide__subtitle,
+.slide[data-layout='closing'] .slide__subtitle {
+  font-size: calc(2.3cqw * var(--k));
+  max-width: 78%;
+}
+
+.slide[data-layout='cover'] .slide__head::after,
+.slide[data-layout='closing'] .slide__head::after {
+  content: '';
+  display: block;
+  width: calc(9cqw * var(--k));
+  height: calc(0.6cqw * var(--k));
+  margin-top: calc(2.2cqw * var(--k));
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+}
+
+.slide[data-layout='section'] .slide__body {
+  align-items: flex-start;
+}
+
+/* ---------------------------- 页脚 ---------------------------- */
+.slide__foot {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2cqw;
+  flex: 0 0 auto;
+  font-size: calc(1.35cqw * var(--k));
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+
+.slide__brand {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 70%;
+}
+
+.slide__page {
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------- 讲者备注 --------------------------- */
+.slide__notes {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 3;
+  padding: calc(1.5cqw) calc(6cqw) calc(1.6cqw);
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: calc(1.4cqw);
+  line-height: 1.45;
+  backdrop-filter: blur(6px);
+  display: none;
+}
+
+body.show-notes .slide.is-active .slide__notes {
+  display: block;
+}
+
+.slide__notes-tag {
+  display: inline-block;
+  margin-right: 0.8em;
+  padding: 0.1em 0.5em;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  font-size: 0.85em;
+  color: var(--accent);
+}
+
+/* ---------------------------- 代码 ---------------------------- */
+.slide code {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  padding: 0.1em 0.4em;
+  border-radius: 4px;
+  background: var(--card);
+  border: 1px solid var(--border);
+}
+
+/* --------------------------- 动画 --------------------------- */
+.deck[data-anim='on'] .slide.is-active .slide__bullets li,
+.deck[data-anim='on'] .slide.is-active .slide__column,
+.deck[data-anim='on'] .slide.is-active .slide__stat,
+.deck[data-anim='on'] .slide.is-active .slide__timeline-item {
+  animation: slide-rise 0.5s both cubic-bezier(0.22, 0.61, 0.36, 1);
+  animation-delay: calc(var(--i, 0) * 70ms + 90ms);
+}
+
+@keyframes slide-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide,
+  .slide * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+  }
+}
+
+/* ------------------------- 打印 / PDF ------------------------- */
+@media print {
+  .slide {
+    break-after: page;
+    page-break-after: always;
+    border-radius: 0;
+  }
+}
+
+
+/* ---------- 演示外壳样式 ---------- */
+/* ==================================================================
+   独立 HTML 导出的「演示外壳」样式（仅导出文件使用）
+   依赖 shared/slide.css 提供 .deck-viewport / .stage / .slide 样式
+   ================================================================== */
+
+:root {
+  --font-sans:
+    system-ui, -apple-system, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC',
+    sans-serif;
+  --font-display:
+    'Segoe UI Semibold', system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+  --font-mono: ui-monospace, 'Cascadia Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.4s ease;
+}
+
+.deck {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.deck__viewport:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  background: var(--bg);
+}
+
+.deck__progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: color-mix(in srgb, var(--fg) 12%, transparent);
+  z-index: 20;
+}
+
+.deck__progress > span {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  transition: width 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* ------------------------------ 控制条 ------------------------------ */
+.deck__controls {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(10px, 2.2vmin, 26px);
+  transform: translateX(-50%);
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bg-soft) 82%, transparent);
+  border: 1px solid var(--border);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(12px);
+  max-width: min(96vw, 720px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.deck.is-idle .deck__controls,
+.deck.is-idle .deck__hint {
+  opacity: 0.16;
+}
+
+.deck__btn {
+  appearance: none;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--fg);
+  font: inherit;
+  font-size: 13px;
+  line-height: 1;
+  padding: 9px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+
+.deck__btn:hover {
+  background: var(--card);
+  border-color: var(--border);
+}
+
+.deck__btn:active {
+  transform: scale(0.96);
+}
+
+.deck__btn--icon {
+  padding: 9px 11px;
+  font-size: 15px;
+}
+
+.deck__counter {
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  padding: 0 8px;
+  min-width: 58px;
+  text-align: center;
+}
+
+.deck__divider {
+  width: 1px;
+  height: 20px;
+  background: var(--border);
+  margin: 0 4px;
+}
+
+#theme-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.deck__theme-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  cursor: pointer;
+  padding: 0;
+  border: 2px solid transparent;
+  background: linear-gradient(135deg, var(--dot), color-mix(in srgb, var(--dot-bg) 90%, #000 0%));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+  transition: transform 0.18s ease, border-color 0.18s ease;
+}
+
+.deck__theme-dot:hover {
+  transform: scale(1.14);
+}
+
+.deck__theme-dot.is-active {
+  border-color: var(--fg);
+  transform: scale(1.14);
+}
+
+.deck__hint {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(58px, 8vmin, 92px);
+  transform: translateX(-50%);
+  z-index: 25;
+  font-size: 12px;
+  color: var(--muted);
+  background: color-mix(in srgb, var(--bg-soft) 70%, transparent);
+  border: 1px solid var(--border);
+  padding: 6px 12px;
+  border-radius: 999px;
+  backdrop-filter: blur(8px);
+  transition: opacity 0.35s ease;
+  white-space: nowrap;
+}
+
+/* ------------------------------ 总览 ------------------------------ */
+.deck__overview {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  background: color-mix(in srgb, var(--bg) 94%, transparent);
+  backdrop-filter: blur(10px);
+  overflow: auto;
+  padding: clamp(16px, 4vmin, 48px);
+}
+
+.deck__overview[hidden] {
+  display: none;
+}
+
+.deck__overview-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.deck__overview-title {
+  margin: 0;
+  font-size: clamp(16px, 2.4vmin, 22px);
+  font-weight: 700;
+}
+
+.deck__overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: clamp(12px, 1.8vmin, 20px);
+}
+
+.deck__thumb {
+  position: relative;
+  appearance: none;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--card);
+  cursor: pointer;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  text-align: left;
+}
+
+.deck__thumb:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+}
+
+.deck__thumb.is-active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+.deck__thumb-stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  container-type: size;
+  overflow: hidden;
+}
+
+.deck__thumb-stage .slide {
+  cursor: pointer;
+}
+
+.deck__thumb-label {
+  position: absolute;
+  right: 8px;
+  bottom: 6px;
+  font-size: 11px;
+  color: var(--muted);
+  background: color-mix(in srgb, var(--bg) 72%, transparent);
+  border-radius: 6px;
+  padding: 1px 6px;
+}
+
+/* ------------------------------ 移动端 ------------------------------ */
+@media (max-width: 720px) {
+  .deck__controls {
+    gap: 2px;
+    padding: 6px 8px;
+    bottom: 8px;
+  }
+
+  .deck__btn {
+    padding: 8px 9px;
+    font-size: 12px;
+  }
+
+  .deck__btn__label {
+    display: none;
+  }
+
+  .deck__hint {
+    display: none;
+  }
+
+  .deck__overview-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+}
+
+/* ------------------------------ 打印 ------------------------------ */
+@media print {
+  html,
+  body {
+    height: auto;
+    overflow: visible;
+    background: #fff;
+  }
+
+  @page {
+    size: landscape;
+    margin: 0;
+  }
+
+  .deck {
+    height: auto;
+    display: block;
+  }
+
+  .deck__overview {
+    display: none !important;
+  }
+
+  .deck__controls,
+  .deck__progress,
+  .deck__hint,
+  .no-print {
+    display: none !important;
+  }
+}
+
+</style>
+</head>
+<body data-theme="midnight">
+<div class="deck" id="deck" data-anim="on">
+  <div class="deck__progress"><span id="progress-bar"></span></div>
+  <div class="deck__viewport" id="viewport">
+    <div class="stage" id="stage" data-inset="false">
+<section class="slide" data-layout="cover" data-density="normal" data-index="0" aria-label="「第三空间」校园咖啡店创业计划">
+  <header class="slide__head">
+    <h1 class="slide__title">「第三空间」校园咖啡店创业计划</h1>
+    <p class="slide__subtitle">不只是一杯咖啡，而是学生的自习、讨论与轻社交空间</p>
+  </header>
+  <div class="slide__body"><ul class="slide__bullets"><li style="--i:0">60 平方米 · 大学城核心位置</li><li style="--i:1">人均消费 15-22 元</li><li style="--i:2">目标回本周期约 11 个月</li></ul></div>
+  <footer class="slide__foot"><span class="slide__brand">「第三空间」校园咖啡店创业计划书</span><span class="slide__page">1 / 10</span></footer>
+  <aside class="slide__notes"><span class="slide__notes-tag">讲者备注</span>开场用一句话点明项目：在大学城核心位置开一家 60 平方米的自习型咖啡店。强调我们卖的不只是咖啡，而是学生的第三空间，让听众在 30 秒内抓住定位与差异。</aside>
+</section>
+<section class="slide" data-layout="section" data-density="normal" data-index="1" aria-label="市场机会">
+  <header class="slide__head">
+    <h2 class="slide__title">市场机会</h2>
+    <p class="slide__subtitle">5.2 万在校生、7 家咖啡门店，以及三个未被满足的需求</p>
+  </header>
+  
+  <footer class="slide__foot"><span class="slide__brand">「第三空间」校园咖啡店创业计划书</span><span class="slide__page">2 / 10</span></footer>
+  <aside class="slide__notes"><span class="slide__notes-tag">讲者备注</span>这一页做节奏切换，把问题抛出来：大学城有 4 所高校、约 5.2 万在校生，周边却只有 7 家咖啡门店，且普遍座位少、插座少、营业时间与自习需求错配。用一句话收尾：这是一个被忽视的刚需市场。</aside>
+</section>
+<section class="slide" data-layout="bullets" data-density="compact" data-index="2" aria-label="项目概述：60 平方米的第三空间">
+  <header class="slide__head">
+    <h2 class="slide__title">项目概述：60 平方米的第三空间</h2>
+  </header>
+  <div class="slide__body"><ul class="slide__bullets"><li style="--i:0">选址：大学城核心位置，可用面积 <strong>60 平方米</strong></li><li style="--i:1">定位：学生的第三空间，不止于售卖咖啡</li><li style="--i:2">功能：自习、小组讨论与轻社交三类场景</li><li style="--i:3">客群：在校本科生与研究生为主</li><li style="--i:4">价格带：人均消费 <strong>15 到 22 元</strong></li></ul></div>
+  <footer class="slide__foot"><span class="slide__brand">「第三空间」校园咖啡店创业计划书</span><span class="slide__page">3 / 10</span></footer>
+  <aside class="slide__notes"><span class="slide__notes-tag">讲者备注</span>介绍项目本体，重点讲清定位与客群。60 平方米、15 到 22 元客单价，说明我们做的是高频、可负担的校园生意，而不是走精品咖啡的溢价路线。</aside>
+</section>
+<section class="slide" data-layout="stats" data-density="normal" data-index="3" aria-label="需求真实存在：关键市场数据">
+  <header class="slide__head">
+    <h2 class="slide__title">需求真实存在：关键市场数据</h2>
+  </header>
+  <div class="slide__body"><div class="slide__stats"><div class="slide__stat">
+        <div class="slide__stat-value">5.2 万</div>
+        <div class="slide__stat-label">大学城在校生规模</div>
+      </div><div class="slide__stat">
+        <div class="slide__stat-value">68%</div>
+        <div class="slide__stat-label">每周至少需 2 次校外自习座位</div>
+      </div><div class="slide__stat">
+        <div class="slide__stat-value">41%</div>
+        <div class="slide__stat-label">愿意为座位付费</div>
+      </div><div class="slide__stat">
+        <div class="slide__stat-value">18 元</div>
+        <div class="slide__stat-label">同类门店客单价</div>
+      </div></div></div>
+  <footer class="slide__foot"><span class="slide__brand">「第三空间」校园咖啡店创业计划书</span><span class="slide__page">4 / 10</span></footer>
+  <aside class="slide__notes"><span class="slide__notes-tag">讲者备注</span>用数据建立说服力。先讲规模，再讲需求强度：68% 的学生每周至少需要两次校外自习座位，其中 41% 愿意为座位付费。最后给出同类门店 18 元客单价，作为我们定价的锚点。</aside>
+</section>
+<section class="slide" data-layout="bullets" data-density="dense" data-index="4" aria-label="产品与定价：三档产品 + 座位变现">
+  <header class="slide__head">
+    <h2 class="slide__title">产品与定价：三档产品 + 座位变现</h2>
+  </header>
+  <div class="slide__body"><ul class="slide__bullets"><li style="--i:0">基础美式 12 元，承担引流作用</li><li style="--i:1">招牌燕麦拿铁 18 元，作为主力单品</li><li style="--i:2">季节限定 22 元，拉高价格带上限</li><li style="--i:3">自习套餐：饮品 + 4 小时座位 <strong>28 元</strong></li><li style="--i:4">会员卡 <strong>99 元/月</strong>：10 杯基础饮品 + 优先选座</li><li style="--i:5">毛利率目标 <strong>65%</strong></li></ul></div>
+  <footer class="slide__foot"><span class="slide__brand">「第三空间」校园咖啡店创业计划书</span><span class="slide__page">5 / 10</span></footer>
+  <aside class="slide__notes"><span class="slide__notes-tag">讲者备注</span>产品结构分三层：引流的基础美式、主力的燕麦拿铁、提价的季节限定。自习套餐 28 元是把座位变现的关键设计，99 元月卡负责锁定复购。最后强调 65% 的毛利目标。</aside>
+</section>
+<section class="slide" data-layout="two-column" data-density="compact" data-index="5" aria-label="选址标准与运营配置">
+  <header class="slide__head">
+    <h2 class="slide__title">选址标准与运营配置</h2>
+  </header>
+  <div class="slide__body"><div class="slide__columns"><div class="slide__column">
+        <h3 class="slide__column-title">选址标准</h3>
+        <ul class="slide__bullets"><li style="--i:0">距教学楼步行 8 分钟内</li><li style="--i:1">临街可见，保证自然客流</li><li style="--i:2">可用面积 55 到 70 平方米</li><li style="--i:3">营业时间 7:30 到 23:00</li></ul>
+      </div><div class="slide__column">
+        <h3 class="slide__column-title">人力与成本</h3>
+        <ul class="slide__bullets"><li style="--i:0">店长 1 名，咖啡师 2 名，兼职 3 名</li><li style="--i:1">7:30 开门覆盖早课，23:00 打烊覆盖晚自习</li><li style="--i:2">人力成本控制在营收 <strong>22% 以内</strong></li><li style="--i:3">每日自查表保障食品安全合规</li></ul>
+      </div></div></div>
+  <footer class="slide__foot"><span class="slide__brand">「第三空间」校园咖啡店创业计划书</span><span class="slide__page">6 / 10</span></footer>
+  <aside class="slide__notes"><span class="slide__notes-tag">讲者备注</span>左边讲选址的硬标准，步行 8 分钟和临街可见决定了自然客流；右边讲运营配置，7:30 到 23:00 覆盖早课与晚自习，人力成本控制在营收 22% 以内是盈利底线。</aside>
+</section>
+<section class="slide" data-layout="stats" data-density="normal" data-index="6" aria-label="财务测算：投入、盈利与回本">
+  <header class="slide__head">
+    <h2 class="slide__title">财务测算：投入、盈利与回本</h2>
+  </header>
+  <div class="slide__body"><div class="slide__stats"><div class="slide__stat">
+        <div class="slide__stat-value">32 万元</div>
+        <div class="slide__stat-label">初始投入（装修 14 万 / 设备 11 万 / 物料证照 4 万 / 流动 3 万）</div>
+      </div><div class="slide__stat">
+        <div class="slide__stat-value">6.6 万元</div>
+        <div class="slide__stat-label">月度成本合计</div>
+      </div><div class="slide__stat">
+        <div class="slide__stat-value">10.8 万元</div>
+        <div class="slide__stat-label">按日均 200 杯测算的月营收</div>
+      </div><div class="slide__stat">
+        <div class="slide__stat-value">约 3.1 万元</div>
+        <div class="slide__stat-label">月净利，回本周期约 11 个月</div>
+      </div></div></div>
+  <footer class="slide__foot"><span class="slide__brand">「第三空间」校园咖啡店创业计划书</span><span class="slide__page">7 / 10</span></footer>
+  <aside class="slide__notes"><span class="slide__notes-tag">讲者备注</span>财务页要讲清三件事：32 万元怎么花、每个月赚多少、多久回本。月度成本 6.6 万元，其中房租 1.6 万、人力 2.1 万、物料 2.4 万、其它 0.5 万；按日均 200 杯、客单价 18 元测算，月营收 10.8 万元，净利约 3.1 万元。</aside>
+</section>
+<section class="slide" data-layout="bullets" data-density="compact" data-index="7" aria-label="风险识别与应对策略">
+  <header class="slide__head">
+    <h2 class="slide__title">风险识别与应对策略</h2>
+  </header>
+  <div class="slide__body"><ul class="slide__bullets"><li style="--i:0">客流季节性：寒暑假营收预计降 <strong>55%</strong>，以外送与企业团单补位</li><li style="--i:1">同质化竞争：用座位体验与会员体系建立差异</li><li style="--i:2">食品安全与合规：每日自查表 + 供应商双源机制</li><li style="--i:3">座位供给：自习套餐与会员优先选座提高翻台效率</li></ul></div>
+  <footer class="slide__foot"><span class="slide__brand">「第三空间」校园咖啡店创业计划书</span><span class="slide__page">8 / 10</span></footer>
+  <aside class="slide__notes"><span class="slide__notes-tag">讲者备注</span>主动暴露风险更显可信。寒暑假营收预计下降 55%，靠外送与企业团单补位；同质化竞争用座位体验和会员体系应对；合规上建立每日自查表与供应商双源机制，避免单点依赖。</aside>
+</section>
+<section class="slide" data-layout="timeline" data-density="normal" data-index="8" aria-label="90 天启动计划">
+  <header class="slide__head">
+    <h2 class="slide__title">90 天启动计划</h2>
+  </header>
+  <div class="slide__body"><ol class="slide__timeline"><li class="slide__timeline-item">
+        <span class="slide__timeline-dot" aria-hidden="true"></span>
+        <div class="slide__timeline-time">第 1-30 天</div>
+        <div class="slide__timeline-text">完成选址签约、证照办理与设备采购</div>
+      </li><li class="slide__timeline-item">
+        <span class="slide__timeline-dot" aria-hidden="true"></span>
+        <div class="slide__timeline-time">第 31-60 天</div>
+        <div class="slide__timeline-text">装修施工、招聘培训、产品试制与试营业</div>
+      </li><li class="slide__timeline-item">
+        <span class="slide__timeline-dot" aria-hidden="true"></span>
+        <div class="slide__timeline-time">第 61-90 天</div>
+        <div class="slide__timeline-text">正式开业，上线会员体系与校园推广</div>
+      </li><li class="slide__timeline-item">
+        <span class="slide__timeline-dot" aria-hidden="true"></span>
+        <div class="slide__timeline-time">阶段目标</div>
+        <div class="slide__timeline-text">日均出杯量达到 150 杯</div>
+      </li></ol></div>
+  <footer class="slide__foot"><span class="slide__brand">「第三空间」校园咖啡店创业计划书</span><span class="slide__page">9 / 10</span></footer>
+  <aside class="slide__notes"><span class="slide__notes-tag">讲者备注</span>90 天计划分三段推进，每段都有明确交付物。前 30 天拿场地和证照，中间 30 天装修培训并试营业，最后 30 天正式开业并做校园推广，第一阶段目标是日均 150 杯。</aside>
+</section>
+<section class="slide" data-layout="closing" data-density="compact" data-index="9" aria-label="总结与行动建议">
+  <header class="slide__head">
+    <h1 class="slide__title">总结与行动建议</h1>
+    <p class="slide__subtitle">以自习刚需切入，用会员体系锁定复购，11 个月收回投入</p>
+  </header>
+  <div class="slide__body"><ul class="slide__bullets"><li style="--i:0">确认 32 万元初始投入与资金安排</li><li style="--i:1">立即启动 90 天计划，优先锁定场地与证照</li><li style="--i:2">开业首阶段以日均 150 杯为考核目标</li><li style="--i:3">持续以会员数据优化座位与产品结构</li></ul></div>
+  <footer class="slide__foot"><span class="slide__brand">「第三空间」校园咖啡店创业计划书</span><span class="slide__page">10 / 10</span></footer>
+  <aside class="slide__notes"><span class="slide__notes-tag">讲者备注</span>收尾落在行动上：确认 32 万元预算、启动 90 天计划、以日均 150 杯作为开业首阶段目标。最后留出时间回应听众关于客流季节性与回本测算的提问。</aside>
+</section>
+    </div>
+  </div>
+
+  <div class="deck__hint no-print">← → 翻页 · F 全屏 · O 总览 · T 换主题 · N 备注 · P 打印</div>
+
+  <div class="deck__controls no-print" role="toolbar" aria-label="演示控制">
+    <button class="deck__btn" type="button" data-action="prev" aria-label="上一页">‹ <span class="deck__btn__label">上一页</span></button>
+    <span class="deck__counter" id="page-counter">1 / 10</span>
+    <button class="deck__btn" type="button" data-action="next" aria-label="下一页"><span class="deck__btn__label">下一页</span> ›</button>
+    <span class="deck__divider" aria-hidden="true"></span>
+    <span id="theme-bar" role="group" aria-label="配色主题"></span>
+    <span class="deck__divider" aria-hidden="true"></span>
+    <button class="deck__btn deck__btn--icon" type="button" data-action="overview" title="总览 (O)" aria-label="总览">▦</button>
+    <button class="deck__btn deck__btn--icon" type="button" data-action="notes" title="讲者备注 (N)" aria-label="讲者备注">🗒</button>
+    <button class="deck__btn deck__btn--icon" type="button" data-action="print" title="打印 / 导出 PDF (P)" aria-label="打印">🖨</button>
+    <button class="deck__btn deck__btn--icon" type="button" data-action="fullscreen" title="全屏 (F)" aria-label="全屏">⛶</button>
+  </div>
+
+  <div class="deck__overview" id="overview" hidden>
+    <div class="deck__overview-head">
+      <h2 class="deck__overview-title">「第三空间」校园咖啡店创业计划书 · 共 10 页</h2>
+      <button class="deck__btn" type="button" data-action="overview">关闭总览 (Esc)</button>
+    </div>
+    <div class="deck__overview-grid" id="overview-grid"></div>
+  </div>
+</div>
+
+<script type="module">
+/* ================= 渲染器（由 shared/slide-render.js 内联） ================= */
+/**
+ * 幻灯片渲染器（前后端共用，纯函数，无任何 import）
+ * ------------------------------------------------------------------
+ * ⚠️ 约束：本文件必须保持「零 import / 零依赖」并且只使用 `export function`
+ * 声明，因为导出独立 HTML 时会把源码内联进 <script type="module">，
+ * 只做 `export ` 关键字剥离（见 server/export.js）。
+ *
+ * 站内（React 用 dangerouslySetInnerHTML）与导出 HTML 使用同一个渲染函数，
+ * 保证「所见即所得」。
+ */
+
+/** 支持的版式 */
+const LAYOUTS = [
+  'cover',
+  'section',
+  'bullets',
+  'two-column',
+  'stats',
+  'timeline',
+  'quote',
+  'closing',
+];
+
+/**
+ * HTML 转义，防止模型输出或用户文案破坏结构。
+ * @param {unknown} value
+ * @returns {string}
+ */
+function escapeHtml(value) {
+  if (value === null || value === undefined) return '';
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/**
+ * 轻量富文本：支持 **加粗** 与 `行内代码`（先转义再替换，安全）。
+ * @param {unknown} value
+ * @returns {string}
+ */
+function richText(value) {
+  let out = escapeHtml(value);
+  out = out.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  out = out.replace(/`([^`]+)`/g, '<code>$1</code>');
+  return out;
+}
+
+/**
+ * 取字符串数组，过滤空值并限制条数。
+ * @param {unknown} value
+ * @param {number} [max]
+ * @returns {string[]}
+ */
+function toStringList(value, max = 8) {
+  if (!Array.isArray(value)) return [];
+  const list = value
+    .map((item) => {
+      if (typeof item === 'string') return item.trim();
+      if (item && typeof item === 'object') {
+        // 容错：模型偶尔会输出 {text: "..."} / {title: "..."}
+        const t = item.text ?? item.title ?? item.label ?? item.value ?? '';
+        const extra = item.desc ?? item.description ?? item.detail ?? '';
+        return String(t + (extra ? `：${extra}` : '')).trim();
+      }
+      return String(item ?? '').trim();
+    })
+    .filter(Boolean);
+  return list.slice(0, max);
+}
+
+/**
+ * 推断版式（模型没给或给错时兜底）。
+ * @param {Record<string, any>} slide
+ * @param {number} index
+ * @returns {string}
+ */
+function resolveLayout(slide, index = 0) {
+  const declared = typeof slide?.layout === 'string' ? slide.layout.trim().toLowerCase() : '';
+  if (LAYOUTS.includes(declared)) return declared;
+  if (slide?.quote && (slide.quote.text || typeof slide.quote === 'string')) return 'quote';
+  if (Array.isArray(slide?.stats) && slide.stats.length) return 'stats';
+  if (Array.isArray(slide?.timeline) && slide.timeline.length) return 'timeline';
+  if (Array.isArray(slide?.columns) && slide.columns.length) return 'two-column';
+  if (toStringList(slide?.bullets).length) return 'bullets';
+  if (index === 0 && (slide?.subtitle || slide?.meta)) return 'cover';
+  return 'section';
+}
+
+/**
+ * 计算内容密度，供 CSS 自适应字号。
+ * @param {Record<string, any>} slide
+ * @param {string} layout
+ * @returns {'normal'|'compact'|'dense'}
+ */
+function resolveDensity(slide, layout) {
+  const bullets = toStringList(slide?.bullets, 99);
+  const columns = Array.isArray(slide?.columns) ? slide.columns : [];
+  let units = bullets.length;
+  let chars = (String(slide?.title || '') + String(slide?.subtitle || '')).length;
+  for (const b of bullets) chars += b.length;
+  for (const col of columns) {
+    const items = toStringList(col?.items, 99);
+    units += items.length / 2;
+    for (const it of items) chars += it.length;
+    chars += String(col?.heading || '').length;
+  }
+  if (Array.isArray(slide?.stats)) units += slide.stats.length * 0.5;
+  if (Array.isArray(slide?.timeline)) units += slide.timeline.length * 0.6;
+  if (layout === 'quote') {
+    chars = String(slide?.quote?.text || slide?.quote || '').length;
+    units = 1;
+  }
+  const score = units + chars / 55;
+  if (score >= 7.5) return 'dense';
+  if (score >= 4.5) return 'compact';
+  return 'normal';
+}
+
+/**
+ * @typedef {Object} RenderOptions
+ * @property {number} [index] 0 基序号
+ * @property {number} [total] 总页数
+ * @property {string} [brand] 页脚品牌/标题
+ * @property {boolean} [notes] 是否渲染讲者备注（默认渲染，导出端用 CSS 控制显隐）
+ */
+
+/**
+ * 渲染单页幻灯片为 HTML 字符串。
+ * @param {Record<string, any>} rawSlide
+ * @param {RenderOptions} [options]
+ * @returns {string}
+ */
+function renderSlide(rawSlide, options = {}) {
+  const slide = rawSlide && typeof rawSlide === 'object' ? rawSlide : {};
+  const index = Number.isFinite(options.index) ? options.index : 0;
+  const total = Number.isFinite(options.total) ? options.total : 0;
+  const brand = options.brand || '';
+  const layout = resolveLayout(slide, index);
+  const density = resolveDensity(slide, layout);
+
+  const title = slide.title ?? slide.heading ?? '';
+  const subtitle = slide.subtitle ?? slide.sub ?? '';
+  const bullets = toStringList(slide.bullets);
+  const columns = Array.isArray(slide.columns) ? slide.columns.slice(0, 3) : [];
+  const stats = Array.isArray(slide.stats) ? slide.stats.slice(0, 4) : [];
+  const timeline = Array.isArray(slide.timeline) ? slide.timeline.slice(0, 6) : [];
+  const quote = slide.quote && typeof slide.quote === 'object' ? slide.quote : { text: slide.quote || '' };
+  const notes = typeof slide.notes === 'string' ? slide.notes.trim() : '';
+
+  const head = [];
+  if (slide.eyebrow) {
+    head.push(`<p class="slide__eyebrow">${richText(slide.eyebrow)}</p>`);
+  }
+  if (title) {
+    const tag = layout === 'cover' || layout === 'closing' ? 'h1' : 'h2';
+    head.push(`<${tag} class="slide__title">${richText(title)}</${tag}>`);
+  }
+  if (subtitle) head.push(`<p class="slide__subtitle">${richText(subtitle)}</p>`);
+
+  let body = '';
+  if (layout === 'bullets' || layout === 'cover' || layout === 'closing' || layout === 'section') {
+    if (bullets.length) {
+      body = `<ul class="slide__bullets">${bullets
+        .map((b, i) => `<li style="--i:${i}">${richText(b)}</li>`)
+        .join('')}</ul>`;
+    }
+  } else if (layout === 'two-column') {
+    body = `<div class="slide__columns">${columns
+      .map((col) => {
+        const items = toStringList(col?.items ?? col?.bullets ?? col?.points, 6);
+        return `<div class="slide__column">
+        ${col?.heading ? `<h3 class="slide__column-title">${richText(col.heading)}</h3>` : ''}
+        <ul class="slide__bullets">${items.map((it, i) => `<li style="--i:${i}">${richText(it)}</li>`).join('')}</ul>
+      </div>`;
+      })
+      .join('')}</div>`;
+  } else if (layout === 'stats') {
+    body = `<div class="slide__stats">${stats
+      .map(
+        (s) => `<div class="slide__stat">
+        <div class="slide__stat-value">${richText(s?.value ?? '')}</div>
+        <div class="slide__stat-label">${richText(s?.label ?? s?.name ?? '')}</div>
+      </div>`,
+      )
+      .join('')}</div>`;
+  } else if (layout === 'timeline') {
+    body = `<ol class="slide__timeline">${timeline
+      .map(
+        (t) => `<li class="slide__timeline-item">
+        <span class="slide__timeline-dot" aria-hidden="true"></span>
+        <div class="slide__timeline-time">${richText(t?.time ?? t?.date ?? '')}</div>
+        <div class="slide__timeline-text">${richText(t?.text ?? t?.title ?? '')}</div>
+      </li>`,
+      )
+      .join('')}</ol>`;
+  } else if (layout === 'quote') {
+    body = `<blockquote class="slide__quote">
+      <p class="slide__quote-text">${richText(quote?.text ?? quote ?? '')}</p>
+      ${quote?.author ? `<footer class="slide__quote-author">—— ${richText(quote.author)}</footer>` : ''}
+    </blockquote>`;
+  }
+
+  const footerBits = [];
+  if (brand) footerBits.push(`<span class="slide__brand">${escapeHtml(brand)}</span>`);
+  footerBits.push(`<span class="slide__page">${total ? `${index + 1} / ${total}` : `${index + 1}`}</span>`);
+
+  return `<section class="slide" data-layout="${layout}" data-density="${density}" data-index="${index}" aria-label="${escapeHtml(
+    String(title || `第 ${index + 1} 页`),
+  )}">
+  ${
+    head.length
+      ? `<header class="slide__head">
+    ${head.join('\n    ')}
+  </header>`
+      : ''
+  }
+  ${body ? `<div class="slide__body">${body}</div>` : ''}
+  <footer class="slide__foot">${footerBits.join('')}</footer>
+  ${notes ? `<aside class="slide__notes"><span class="slide__notes-tag">讲者备注</span>${richText(notes)}</aside>` : ''}
+</section>`;
+}
+
+/**
+ * 批量渲染。
+ * @param {Array<Record<string, any>>} slides
+ * @param {RenderOptions} [options]
+ * @returns {string}
+ */
+function renderSlides(slides, options = {}) {
+  const list = Array.isArray(slides) ? slides : [];
+  return list.map((s, i) => renderSlide(s, { ...options, index: i, total: list.length })).join('\n');
+}
+
+/** 模板骨架 */
+const LAYOUT_TEMPLATES = LAYOUTS;
+
+
+/* ================= 数据 ================= */
+const DECK = {"title":"「第三空间」校园咖啡店创业计划书","subtitle":"面向大学城 5.2 万在校生的自习型咖啡空间","slideCount":10,"slides":[{"layout":"cover","title":"「第三空间」校园咖啡店创业计划","subtitle":"不只是一杯咖啡，而是学生的自习、讨论与轻社交空间","notes":"开场用一句话点明项目：在大学城核心位置开一家 60 平方米的自习型咖啡店。强调我们卖的不只是咖啡，而是学生的第三空间，让听众在 30 秒内抓住定位与差异。","bullets":["60 平方米 · 大学城核心位置","人均消费 15-22 元","目标回本周期约 11 个月"]},{"layout":"section","title":"市场机会","subtitle":"5.2 万在校生、7 家咖啡门店，以及三个未被满足的需求","notes":"这一页做节奏切换，把问题抛出来：大学城有 4 所高校、约 5.2 万在校生，周边却只有 7 家咖啡门店，且普遍座位少、插座少、营业时间与自习需求错配。用一句话收尾：这是一个被忽视的刚需市场。"},{"layout":"bullets","title":"项目概述：60 平方米的第三空间","subtitle":"","notes":"介绍项目本体，重点讲清定位与客群。60 平方米、15 到 22 元客单价，说明我们做的是高频、可负担的校园生意，而不是走精品咖啡的溢价路线。","bullets":["选址：大学城核心位置，可用面积 **60 平方米**","定位：学生的第三空间，不止于售卖咖啡","功能：自习、小组讨论与轻社交三类场景","客群：在校本科生与研究生为主","价格带：人均消费 **15 到 22 元**"]},{"layout":"stats","title":"需求真实存在：关键市场数据","subtitle":"","notes":"用数据建立说服力。先讲规模，再讲需求强度：68% 的学生每周至少需要两次校外自习座位，其中 41% 愿意为座位付费。最后给出同类门店 18 元客单价，作为我们定价的锚点。","stats":[{"value":"5.2 万","label":"大学城在校生规模"},{"value":"68%","label":"每周至少需 2 次校外自习座位"},{"value":"41%","label":"愿意为座位付费"},{"value":"18 元","label":"同类门店客单价"}]},{"layout":"bullets","title":"产品与定价：三档产品 + 座位变现","subtitle":"","notes":"产品结构分三层：引流的基础美式、主力的燕麦拿铁、提价的季节限定。自习套餐 28 元是把座位变现的关键设计，99 元月卡负责锁定复购。最后强调 65% 的毛利目标。","bullets":["基础美式 12 元，承担引流作用","招牌燕麦拿铁 18 元，作为主力单品","季节限定 22 元，拉高价格带上限","自习套餐：饮品 + 4 小时座位 **28 元**","会员卡 **99 元/月**：10 杯基础饮品 + 优先选座","毛利率目标 **65%**"]},{"layout":"two-column","title":"选址标准与运营配置","subtitle":"","notes":"左边讲选址的硬标准，步行 8 分钟和临街可见决定了自然客流；右边讲运营配置，7:30 到 23:00 覆盖早课与晚自习，人力成本控制在营收 22% 以内是盈利底线。","columns":[{"heading":"选址标准","items":["距教学楼步行 8 分钟内","临街可见，保证自然客流","可用面积 55 到 70 平方米","营业时间 7:30 到 23:00"]},{"heading":"人力与成本","items":["店长 1 名，咖啡师 2 名，兼职 3 名","7:30 开门覆盖早课，23:00 打烊覆盖晚自习","人力成本控制在营收 **22% 以内**","每日自查表保障食品安全合规"]}]},{"layout":"stats","title":"财务测算：投入、盈利与回本","subtitle":"","notes":"财务页要讲清三件事：32 万元怎么花、每个月赚多少、多久回本。月度成本 6.6 万元，其中房租 1.6 万、人力 2.1 万、物料 2.4 万、其它 0.5 万；按日均 200 杯、客单价 18 元测算，月营收 10.8 万元，净利约 3.1 万元。","stats":[{"value":"32 万元","label":"初始投入（装修 14 万 / 设备 11 万 / 物料证照 4 万 / 流动 3 万）"},{"value":"6.6 万元","label":"月度成本合计"},{"value":"10.8 万元","label":"按日均 200 杯测算的月营收"},{"value":"约 3.1 万元","label":"月净利，回本周期约 11 个月"}]},{"layout":"bullets","title":"风险识别与应对策略","subtitle":"","notes":"主动暴露风险更显可信。寒暑假营收预计下降 55%，靠外送与企业团单补位；同质化竞争用座位体验和会员体系应对；合规上建立每日自查表与供应商双源机制，避免单点依赖。","bullets":["客流季节性：寒暑假营收预计降 **55%**，以外送与企业团单补位","同质化竞争：用座位体验与会员体系建立差异","食品安全与合规：每日自查表 + 供应商双源机制","座位供给：自习套餐与会员优先选座提高翻台效率"]},{"layout":"timeline","title":"90 天启动计划","subtitle":"","notes":"90 天计划分三段推进，每段都有明确交付物。前 30 天拿场地和证照，中间 30 天装修培训并试营业，最后 30 天正式开业并做校园推广，第一阶段目标是日均 150 杯。","timeline":[{"time":"第 1-30 天","text":"完成选址签约、证照办理与设备采购"},{"time":"第 31-60 天","text":"装修施工、招聘培训、产品试制与试营业"},{"time":"第 61-90 天","text":"正式开业，上线会员体系与校园推广"},{"time":"阶段目标","text":"日均出杯量达到 150 杯"}]},{"layout":"closing","title":"总结与行动建议","subtitle":"以自习刚需切入，用会员体系锁定复购，11 个月收回投入","notes":"收尾落在行动上：确认 32 万元预算、启动 90 天计划、以日均 150 杯作为开业首阶段目标。最后留出时间回应听众关于客流季节性与回本测算的提问。","bullets":["确认 32 万元初始投入与资金安排","立即启动 90 天计划，优先锁定场地与证照","开业首阶段以日均 150 杯为考核目标","持续以会员数据优化座位与产品结构"]}],"meta":{"generatedAt":"2026-09-24T15:47:16.347Z","declaredSlideCount":10}};
+const THEMES = [{"id":"midnight","name":"深空蓝","desc":"深色科技风，适合产品发布与技术分享","accent":"#6ea8fe","bg":"#070b18"},{"id":"paper","name":"极简白","desc":"明亮干净的商务风，适合汇报与提案","accent":"#2563eb","bg":"#eef1f6"},{"id":"ocean","name":"深海青","desc":"青绿渐变的清爽科技风","accent":"#22d3ee","bg":"#04141a"},{"id":"sunset","name":"落日暖阳","desc":"暖色高对比，适合创意与营销主题","accent":"#fb7185","bg":"#170a12"},{"id":"forest","name":"青竹绿","desc":"自然清新的浅色风，适合教育与方法论","accent":"#15803d","bg":"#e9f1ea"},{"id":"graphite","name":"石墨黑","desc":"黑白极简，适合设计与严肃场合","accent":"#e5e7eb","bg":"#0b0b0c"}];
+
+/* ================= 运行时（由 shared/export-runtime.js 内联） ================= */
+/**
+ * 导出 HTML 内的演示运行时（纯浏览器脚本，无 import/export）
+ * ------------------------------------------------------------------
+ * 会被 server/export.js 原样内联进 <script type="module">，
+ * 与服务端渲染好的 slide 结构配合，提供：
+ * 键盘翻页 / 点击翻页 / 触摸滑动 / 全屏 / 总览 / 主题切换 / 讲者备注 / 打印 PDF
+ */
+(() => {
+  const deckEl = document.getElementById('deck');
+  const stage = document.getElementById('stage');
+  const viewport = document.getElementById('viewport');
+  const bar = document.getElementById('progress-bar');
+  const counter = document.getElementById('page-counter');
+  const overview = document.getElementById('overview');
+  const overviewGrid = document.getElementById('overview-grid');
+  const themeBar = document.getElementById('theme-bar');
+  if (!deckEl || !stage) return;
+
+  const slides = Array.from(stage.querySelectorAll('.slide'));
+  if (!slides.length) return;
+
+  const store = {
+    get(key, fallback) {
+      try {
+        const v = window.localStorage.getItem(key);
+        return v === null ? fallback : v;
+      } catch {
+        return fallback;
+      }
+    },
+    set(key, value) {
+      try {
+        window.localStorage.setItem(key, value);
+      } catch {
+        /* file:// 下可能被禁用，忽略 */
+      }
+    },
+  };
+
+  const total = slides.length;
+  let index = 0;
+
+  const parseHash = () => {
+    const m = String(location.hash || '').match(/(\d+)/);
+    if (!m) return 0;
+    return Math.min(total, Math.max(1, Number(m[1]))) - 1;
+  };
+
+  const render = (next, options = {}) => {
+    index = Math.min(total - 1, Math.max(0, next));
+    slides.forEach((slide, i) => {
+      const active = i === index;
+      slide.classList.toggle('is-active', active);
+      slide.setAttribute('aria-hidden', active ? 'false' : 'true');
+    });
+    if (bar) bar.style.width = `${((index + 1) / total) * 100}%`;
+    if (counter) counter.textContent = `${index + 1} / ${total}`;
+    if (overviewGrid) {
+      Array.from(overviewGrid.children).forEach((el, i) => el.classList.toggle('is-active', i === index));
+    }
+    if (!options.silent) {
+      try {
+        history.replaceState(null, '', `#/${index + 1}`);
+      } catch {
+        /* 某些环境（file://）可能不允许，忽略 */
+      }
+    }
+  };
+
+  const go = (delta) => render(index + delta);
+  const goTo = (i) => render(i);
+  const toggleFullscreen = () => {
+    const target = viewport || stage;
+    if (!document.fullscreenElement) {
+      (target.requestFullscreen ? target.requestFullscreen() : Promise.reject()).catch(() => {
+        document.documentElement.classList.toggle('is-pseudo-fullscreen');
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  };
+
+  const buildOverview = () => {
+    if (!overviewGrid) return;
+    if (overviewGrid.childElementCount) return;
+    slides.forEach((slide, i) => {
+      const item = document.createElement('button');
+      item.type = 'button';
+      item.className = 'deck__thumb';
+      item.setAttribute('aria-label', `跳到第 ${i + 1} 页`);
+      const inner = document.createElement('div');
+      inner.className = 'deck__thumb-stage';
+      const clone = slide.cloneNode(true);
+      clone.classList.add('is-active');
+      inner.appendChild(clone);
+      const label = document.createElement('span');
+      label.className = 'deck__thumb-label';
+      label.textContent = `${i + 1}`;
+      item.appendChild(inner);
+      item.appendChild(label);
+      item.addEventListener('click', () => {
+        goTo(i);
+        toggleOverview(false);
+      });
+      overviewGrid.appendChild(item);
+    });
+    render(index, { silent: true });
+  };
+
+  const toggleOverview = (force) => {
+    if (!overview) return;
+    const show = force === undefined ? overview.hidden : force;
+    if (show) buildOverview();
+    overview.hidden = !show;
+    deckEl.classList.toggle('is-overview', show);
+  };
+
+  const setTheme = (id) => {
+    document.body.setAttribute('data-theme', id);
+    store.set('ppt-theme', id);
+    if (themeBar) {
+      Array.from(themeBar.querySelectorAll('[data-theme-id]')).forEach((btn) => {
+        btn.classList.toggle('is-active', btn.getAttribute('data-theme-id') === id);
+      });
+    }
+  };
+
+  const cycleTheme = () => {
+    const ids = THEMES.map((t) => t.id);
+    const current = document.body.getAttribute('data-theme') || ids[0];
+    const next = ids[(ids.indexOf(current) + 1) % ids.length];
+    setTheme(next);
+  };
+
+  const toggleNotes = () => {
+    document.body.classList.toggle('show-notes');
+    store.set('ppt-notes', document.body.classList.contains('show-notes') ? '1' : '0');
+  };
+
+  const printDeck = () => {
+    deckEl.setAttribute('data-mode', 'flow');
+    document.body.classList.add('is-print');
+    const cleanup = () => {
+      deckEl.removeAttribute('data-mode');
+      document.body.classList.remove('is-print');
+      window.removeEventListener('afterprint', cleanup);
+    };
+    window.addEventListener('afterprint', cleanup);
+    window.setTimeout(() => {
+      window.print();
+      window.setTimeout(cleanup, 800);
+    }, 120);
+  };
+
+  // ------------------------------ 事件绑定 ------------------------------
+  document.addEventListener('keydown', (event) => {
+    if (event.defaultPrevented) return;
+    const key = event.key;
+    const lower = key.toLowerCase();
+    if (event.metaKey || event.ctrlKey || event.altKey) return;
+
+    if (['ArrowRight', 'ArrowDown', 'PageDown', ' ', 'Enter'].includes(key)) {
+      event.preventDefault();
+      go(1);
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'].includes(key)) {
+      event.preventDefault();
+      go(-1);
+    } else if (key === 'Home') {
+      event.preventDefault();
+      goTo(0);
+    } else if (key === 'End') {
+      event.preventDefault();
+      goTo(total - 1);
+    } else if (lower === 'f') {
+      toggleFullscreen();
+    } else if (lower === 'o') {
+      toggleOverview();
+    } else if (lower === 't') {
+      cycleTheme();
+    } else if (lower === 'n') {
+      toggleNotes();
+    } else if (lower === 'p') {
+      printDeck();
+    } else if (key === 'Escape') {
+      toggleOverview(false);
+    } else if (/^[1-9]$/.test(key)) {
+      goTo(Number(key) - 1);
+    }
+  });
+
+  document.querySelectorAll('[data-action]').forEach((el) => {
+    el.addEventListener('click', (event) => {
+      event.preventDefault();
+      const action = el.getAttribute('data-action');
+      if (action === 'prev') go(-1);
+      else if (action === 'next') go(1);
+      else if (action === 'fullscreen') toggleFullscreen();
+      else if (action === 'overview') toggleOverview();
+      else if (action === 'theme') cycleTheme();
+      else if (action === 'notes') toggleNotes();
+      else if (action === 'print') printDeck();
+    });
+  });
+
+  // 点击舞台：左 20% 上一页，其余下一页
+  stage.addEventListener('click', (event) => {
+    const rect = stage.getBoundingClientRect();
+    const ratio = (event.clientX - rect.left) / Math.max(1, rect.width);
+    go(ratio < 0.2 ? -1 : 1);
+  });
+
+  // 触摸滑动
+  let touchStartX = 0;
+  let touchStartY = 0;
+  stage.addEventListener(
+    'touchstart',
+    (event) => {
+      touchStartX = event.touches[0].clientX;
+      touchStartY = event.touches[0].clientY;
+    },
+    { passive: true },
+  );
+  stage.addEventListener(
+    'touchend',
+    (event) => {
+      const dx = event.changedTouches[0].clientX - touchStartX;
+      const dy = event.changedTouches[0].clientY - touchStartY;
+      if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) go(dx < 0 ? 1 : -1);
+    },
+    { passive: true },
+  );
+
+  // 鼠标滚轮（节流）
+  let wheelLock = 0;
+  stage.addEventListener(
+    'wheel',
+    (event) => {
+      const now = Date.now();
+      if (now - wheelLock < 700) return;
+      if (Math.abs(event.deltaY) < 12) return;
+      wheelLock = now;
+      go(event.deltaY > 0 ? 1 : -1);
+    },
+    { passive: true },
+  );
+
+  window.addEventListener('hashchange', () => {
+    const target = parseHash();
+    if (target !== index) render(target, { silent: true });
+  });
+
+  // 空闲时淡化控制条
+  let idleTimer = 0;
+  const wake = () => {
+    deckEl.classList.remove('is-idle');
+    window.clearTimeout(idleTimer);
+    idleTimer = window.setTimeout(() => deckEl.classList.add('is-idle'), 3200);
+  };
+  ['mousemove', 'touchstart', 'keydown'].forEach((evt) => window.addEventListener(evt, wake, { passive: true }));
+
+  if (themeBar) {
+    THEMES.forEach((theme) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'deck__theme-dot';
+      btn.setAttribute('data-theme-id', theme.id);
+      btn.setAttribute('title', `${theme.name} · ${theme.desc}`);
+      btn.setAttribute('aria-label', `切换到主题 ${theme.name}`);
+      btn.style.setProperty('--dot', theme.accent);
+      btn.style.setProperty('--dot-bg', theme.bg);
+      btn.addEventListener('click', () => setTheme(theme.id));
+      themeBar.appendChild(btn);
+    });
+  }
+
+  if (store.get('ppt-notes', '0') === '1') document.body.classList.add('show-notes');
+  setTheme(store.get('ppt-theme', document.body.getAttribute('data-theme') || THEMES[0].id));
+
+  document.title = DECK.title ? `${DECK.title} · 演示` : document.title;
+
+  render(parseHash(), { silent: true });
+  wake();
+})();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-export="ai-web-ppt">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="generator" content="AI 网页 PPT 生成器" />
+<meta name="description" content="从试点验证到价值闭环：稳定、可控、可衡量的落地路径" />
+<title>企业级 AI 落地的三个阶段</title>
+<style>
+/* ---------- 主题变量 ---------- */
+[data-theme="midnight"] {
+  --bg: #070b18;
+  --bg-soft: #0d1428;
+  --slide-bg: radial-gradient(120% 120% at 12% 0%, #1b2a5e 0%, #0b1226 45%, #05070f 100%);
+  --fg: #eef3ff;
+  --muted: #9fb0d4;
+  --accent: #6ea8fe;
+  --accent-2: #a78bfa;
+  --card: rgba(255,255,255,0.06);
+  --border: rgba(255,255,255,0.14);
+  --shadow: 0 30px 80px rgba(0,0,0,0.55);
+  --grid: rgba(110,168,254,0.10);
+  color-scheme: dark;
+}
+
+[data-theme="paper"] {
+  --bg: #eef1f6;
+  --bg-soft: #ffffff;
+  --slide-bg: linear-gradient(160deg, #ffffff 0%, #f4f7fd 60%, #e9eff9 100%);
+  --fg: #12192b;
+  --muted: #5a6580;
+  --accent: #2563eb;
+  --accent-2: #0ea5e9;
+  --card: rgba(37,99,235,0.06);
+  --border: rgba(18,25,43,0.12);
+  --shadow: 0 24px 60px rgba(23,42,84,0.18);
+  --grid: rgba(37,99,235,0.08);
+  color-scheme: light;
+}
+
+[data-theme="ocean"] {
+  --bg: #04141a;
+  --bg-soft: #0a2029;
+  --slide-bg: radial-gradient(120% 120% at 85% 10%, #0e4a52 0%, #062029 50%, #020c11 100%);
+  --fg: #e8feff;
+  --muted: #8fc9cf;
+  --accent: #22d3ee;
+  --accent-2: #34d399;
+  --card: rgba(34,211,238,0.08);
+  --border: rgba(232,254,255,0.16);
+  --shadow: 0 30px 80px rgba(0,0,0,0.5);
+  --grid: rgba(34,211,238,0.12);
+  color-scheme: dark;
+}
+
+[data-theme="sunset"] {
+  --bg: #170a12;
+  --bg-soft: #26101d;
+  --slide-bg: radial-gradient(130% 120% at 10% 0%, #6d1b3c 0%, #33122b 48%, #150711 100%);
+  --fg: #fff3ec;
+  --muted: #e3b6bd;
+  --accent: #fb7185;
+  --accent-2: #fbbf24;
+  --card: rgba(251,113,133,0.10);
+  --border: rgba(255,243,236,0.18);
+  --shadow: 0 30px 80px rgba(0,0,0,0.55);
+  --grid: rgba(251,113,133,0.12);
+  color-scheme: dark;
+}
+
+[data-theme="forest"] {
+  --bg: #e9f1ea;
+  --bg-soft: #ffffff;
+  --slide-bg: linear-gradient(155deg, #ffffff 0%, #f1f8f0 55%, #e3efe4 100%);
+  --fg: #0f2417;
+  --muted: #4b6a55;
+  --accent: #15803d;
+  --accent-2: #0d9488;
+  --card: rgba(21,128,61,0.07);
+  --border: rgba(15,36,23,0.12);
+  --shadow: 0 24px 60px rgba(19,64,40,0.18);
+  --grid: rgba(21,128,61,0.09);
+  color-scheme: light;
+}
+
+[data-theme="graphite"] {
+  --bg: #0b0b0c;
+  --bg-soft: #151517;
+  --slide-bg: linear-gradient(150deg, #1c1c1f 0%, #101012 55%, #08080a 100%);
+  --fg: #f4f4f5;
+  --muted: #a1a1aa;
+  --accent: #e5e7eb;
+  --accent-2: #9ca3af;
+  --card: rgba(255,255,255,0.05);
+  --border: rgba(255,255,255,0.16);
+  --shadow: 0 30px 80px rgba(0,0,0,0.6);
+  --grid: rgba(255,255,255,0.07);
+  color-scheme: dark;
+}
+
+/* ---------- 基础变量 ---------- */
+:root {
+  --font-sans: system-ui, -apple-system, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+  --font-display: 'Segoe UI Semibold', system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+  --font-mono: ui-monospace, 'Cascadia Mono', SFMono-Regular, Consolas, monospace;
+}
+
+/* ---------- 幻灯片样式 ---------- */
+/* ==================================================================
+   幻灯片视觉样式（站内演示 + 独立 HTML 导出 共用）
+   仅依赖 [data-theme] 上的 CSS 变量，主题切换无需重新渲染 DOM。
+   ================================================================== */
+
+.deck-viewport {
+  container-type: size;
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: clamp(0px, 1.2vmin, 20px);
+  box-sizing: border-box;
+}
+
+/* 16:9 舞台：优先用容器查询单位，老浏览器回退到 vw/vh */
+.stage {
+  position: relative;
+  width: min(96vw, 96vh * 16 / 9);
+  aspect-ratio: 16 / 9;
+  container-type: size;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--slide-bg);
+  color: var(--fg);
+  box-shadow: var(--shadow);
+  transition:
+    background 0.4s ease,
+    color 0.3s ease;
+}
+
+@supports (width: 1cqw) {
+  .stage {
+    width: min(100cqw, 100cqh * 16 / 9);
+  }
+}
+
+/* 内缩播放模式（站内演示不占满屏时留白） */
+.stage[data-inset='true'] {
+  border-radius: 18px;
+}
+
+/* ------------------------------ 单页 ------------------------------ */
+.slide {
+  --k: 1;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2.6cqw;
+  padding: 5.4cqw 6cqw 4.4cqw;
+  box-sizing: border-box;
+  background: var(--slide-bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transform: translate3d(0, 1.2%, 0) scale(0.995);
+  transition:
+    opacity 0.42s cubic-bezier(0.22, 0.61, 0.36, 1),
+    transform 0.42s cubic-bezier(0.22, 0.61, 0.36, 1),
+    visibility 0.42s;
+}
+
+/* 网格氛围光 */
+.slide::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 6cqw 6cqw;
+  mask-image: radial-gradient(120% 90% at 90% 0%, #000 0%, transparent 70%);
+  -webkit-mask-image: radial-gradient(120% 90% at 90% 0%, #000 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.slide.is-active {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+/* 打印 / 导出长图时：全部可见并顺序排布 */
+.deck[data-mode='flow'] .stage,
+body.is-print .stage {
+  container-type: normal;
+  width: 100%;
+  height: auto;
+  aspect-ratio: auto;
+  display: block;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.deck[data-mode='flow'] .slide,
+body.is-print .slide {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  container-type: size;
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+.slide[data-density='compact'] {
+  --k: 0.87;
+}
+
+.slide[data-density='dense'] {
+  --k: 0.76;
+}
+
+/* ---------------------------- 头部 ---------------------------- */
+.slide__head {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: calc(1.1cqw * var(--k));
+  flex: 0 0 auto;
+}
+
+.slide__eyebrow {
+  margin: 0;
+  font-size: calc(1.5cqw * var(--k));
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.slide__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: calc(4.3cqw * var(--k));
+  line-height: 1.14;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.slide__subtitle {
+  margin: 0;
+  font-size: calc(2.05cqw * var(--k));
+  line-height: 1.5;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+
+/* ---------------------------- 主体 ---------------------------- */
+.slide__body {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+}
+
+.slide__bullets {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: calc(1.5cqw * var(--k));
+  width: 100%;
+}
+
+.slide__bullets li {
+  position: relative;
+  padding-left: calc(3.1cqw * var(--k));
+  font-size: calc(2.1cqw * var(--k));
+  line-height: 1.5;
+  color: var(--fg);
+  text-wrap: pretty;
+}
+
+.slide__bullets li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: calc(0.85cqw * var(--k));
+  width: calc(1.35cqw * var(--k));
+  height: calc(1.35cqw * var(--k));
+  border-radius: 30% 70% 62% 38% / 45% 40% 60% 55%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: 0 0 0 calc(0.35cqw * var(--k)) var(--card);
+}
+
+.slide__bullets li strong {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.slide__column-title {
+  margin: 0 0 calc(1.4cqw * var(--k));
+  font-size: calc(2.3cqw * var(--k));
+  font-weight: 700;
+  color: var(--accent);
+}
+
+/* -------------------------- 两栏布局 -------------------------- */
+.slide__columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  gap: calc(2.6cqw * var(--k));
+  width: 100%;
+  align-items: start;
+}
+
+.slide__column {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 1.2cqw;
+  padding: calc(2cqw * var(--k)) calc(2.2cqw * var(--k));
+}
+
+/* -------------------------- 数据布局 -------------------------- */
+.slide__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  gap: calc(2cqw * var(--k));
+  width: 100%;
+  text-align: center;
+}
+
+.slide__stat {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 1.2cqw;
+  padding: calc(2.4cqw * var(--k)) calc(1.4cqw * var(--k));
+}
+
+.slide__stat-value {
+  font-family: var(--font-display);
+  font-size: calc(4.6cqw * var(--k));
+  font-weight: 800;
+  line-height: 1.05;
+  background: linear-gradient(120deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.slide__stat-label {
+  margin-top: calc(0.9cqw * var(--k));
+  font-size: calc(1.55cqw * var(--k));
+  color: var(--muted);
+}
+
+/* --------------------------- 时间轴 --------------------------- */
+.slide__timeline {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: calc(1.5cqw * var(--k));
+  width: 100%;
+  counter-reset: tl;
+}
+
+.slide__timeline-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: calc(9cqw * var(--k)) 1fr;
+  gap: calc(1.6cqw * var(--k));
+  align-items: baseline;
+  padding-left: calc(2.4cqw * var(--k));
+}
+
+.slide__timeline-item::before {
+  content: '';
+  position: absolute;
+  left: calc(0.6cqw * var(--k));
+  top: calc(1.4cqw * var(--k));
+  bottom: calc(-1.5cqw * var(--k));
+  width: 1px;
+  background: var(--border);
+}
+
+.slide__timeline-item:last-child::before {
+  display: none;
+}
+
+.slide__timeline-dot {
+  position: absolute;
+  left: 0;
+  top: calc(0.75cqw * var(--k));
+  width: calc(1.3cqw * var(--k));
+  height: calc(1.3cqw * var(--k));
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.slide__timeline-time {
+  font-size: calc(1.75cqw * var(--k));
+  font-weight: 700;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.slide__timeline-text {
+  font-size: calc(1.9cqw * var(--k));
+  line-height: 1.45;
+}
+
+/* ---------------------------- 引用 ---------------------------- */
+.slide__quote {
+  margin: 0;
+  max-width: 88%;
+}
+
+.slide__quote-text {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: calc(3.4cqw * var(--k));
+  line-height: 1.4;
+  font-weight: 600;
+  text-wrap: balance;
+}
+
+.slide__quote-text::before {
+  content: '“';
+  color: var(--accent);
+}
+
+.slide__quote-text::after {
+  content: '”';
+  color: var(--accent);
+}
+
+.slide__quote-author {
+  margin-top: calc(2cqw * var(--k));
+  font-size: calc(1.8cqw * var(--k));
+  color: var(--muted);
+}
+
+/* ---------------------- 封面 / 章节 / 结尾 ---------------------- */
+.slide[data-layout='cover'],
+.slide[data-layout='closing'],
+.slide[data-layout='section'] {
+  justify-content: center;
+}
+
+.slide[data-layout='cover'] .slide__title,
+.slide[data-layout='closing'] .slide__title {
+  font-size: calc(6.6cqw * var(--k));
+  line-height: 1.08;
+}
+
+.slide[data-layout='section'] .slide__title {
+  font-size: calc(5.4cqw * var(--k));
+}
+
+.slide[data-layout='cover'] .slide__subtitle,
+.slide[data-layout='closing'] .slide__subtitle {
+  font-size: calc(2.3cqw * var(--k));
+  max-width: 78%;
+}
+
+.slide[data-layout='cover'] .slide__head::after,
+.slide[data-layout='closing'] .slide__head::after {
+  content: '';
+  display: block;
+  width: calc(9cqw * var(--k));
+  height: calc(0.6cqw * var(--k));
+  margin-top: calc(2.2cqw * var(--k));
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+}
+
+.slide[data-layout='section'] .slide__body {
+  align-items: flex-start;
+}
+
+/* ---------------------------- 页脚 ---------------------------- */
+.slide__foot {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2cqw;
+  flex: 0 0 auto;
+  font-size: calc(1.35cqw * var(--k));
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+
+.slide__brand {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 70%;
+}
+
+.slide__page {
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------- 讲者备注 --------------------------- */
+.slide__notes {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 3;
+  padding: calc(1.5cqw) calc(6cqw) calc(1.6cqw);
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: calc(1.4cqw);
+  line-height: 1.45;
+  backdrop-filter: blur(6px);
+  display: none;
+}
+
+body.show-notes .slide.is-active .slide__notes {
+  display: block;
+}
+
+.slide__notes-tag {
+  display: inline-block;
+  margin-right: 0.8em;
+  padding: 0.1em 0.5em;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  font-size: 0.85em;
+  color: var(--accent);
+}
+
+/* ---------------------------- 代码 ---------------------------- */
+.slide code {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  padding: 0.1em 0.4em;
+  border-radius: 4px;
+  background: var(--card);
+  border: 1px solid var(--border);
+}
+
+/* --------------------------- 动画 --------------------------- */
+.deck[data-anim='on'] .slide.is-active .slide__bullets li,
+.deck[data-anim='on'] .slide.is-active .slide__column,
+.deck[data-anim='on'] .slide.is-active .slide__stat,
+.deck[data-anim='on'] .slide.is-active .slide__timeline-item {
+  animation: slide-rise 0.5s both cubic-bezier(0.22, 0.61, 0.36, 1);
+  animation-delay: calc(var(--i, 0) * 70ms + 90ms);
+}
+
+@keyframes slide-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide,
+  .slide * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+  }
+}
+
+/* ------------------------- 打印 / PDF ------------------------- */
+@media print {
+  .slide {
+    break-after: page;
+    page-break-after: always;
+    border-radius: 0;
+  }
+}
+
+
+/* ---------- 演示外壳样式 ---------- */
+/* ==================================================================
+   独立 HTML 导出的「演示外壳」样式（仅导出文件使用）
+   依赖 shared/slide.css 提供 .deck-viewport / .stage / .slide 样式
+   ================================================================== */
+
+:root {
+  --font-sans:
+    system-ui, -apple-system, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC',
+    sans-serif;
+  --font-display:
+    'Segoe UI Semibold', system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+  --font-mono: ui-monospace, 'Cascadia Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.4s ease;
+}
+
+.deck {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.deck__viewport:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  background: var(--bg);
+}
+
+.deck__progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: color-mix(in srgb, var(--fg) 12%, transparent);
+  z-index: 20;
+}
+
+.deck__progress > span {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  transition: width 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* ------------------------------ 控制条 ------------------------------ */
+.deck__controls {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(10px, 2.2vmin, 26px);
+  transform: translateX(-50%);
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bg-soft) 82%, transparent);
+  border: 1px solid var(--border);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(12px);
+  max-width: min(96vw, 720px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.deck.is-idle .deck__controls,
+.deck.is-idle .deck__hint {
+  opacity: 0.16;
+}
+
+.deck__btn {
+  appearance: none;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--fg);
+  font: inherit;
+  font-size: 13px;
+  line-height: 1;
+  padding: 9px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+
+.deck__btn:hover {
+  background: var(--card);
+  border-color: var(--border);
+}
+
+.deck__btn:active {
+  transform: scale(0.96);
+}
+
+.deck__btn--icon {
+  padding: 9px 11px;
+  font-size: 15px;
+}
+
+.deck__counter {
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  padding: 0 8px;
+  min-width: 58px;
+  text-align: center;
+}
+
+.deck__divider {
+  width: 1px;
+  height: 20px;
+  background: var(--border);
+  margin: 0 4px;
+}
+
+#theme-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.deck__theme-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  cursor: pointer;
+  padding: 0;
+  border: 2px solid transparent;
+  background: linear-gradient(135deg, var(--dot), color-mix(in srgb, var(--dot-bg) 90%, #000 0%));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+  transition: transform 0.18s ease, border-color 0.18s ease;
+}
+
+.deck__theme-dot:hover {
+  transform: scale(1.14);
+}
+
+.deck__theme-dot.is-active {
+  border-color: var(--fg);
+  transform: scale(1.14);
+}
+
+.deck__hint {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(58px, 8vmin, 92px);
+  transform: translateX(-50%);
+  z-index: 25;
+  font-size: 12px;
+  color: var(--muted);
+  background: color-mix(in srgb, var(--bg-soft) 70%, transparent);
+  border: 1px solid var(--border);
+  padding: 6px 12px;
+  border-radius: 999px;
+  backdrop-filter: blur(8px);
+  transition: opacity 0.35s ease;
+  white-space: nowrap;
+}
+
+/* ------------------------------ 总览 ------------------------------ */
+.deck__overview {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  background: color-mix(in srgb, var(--bg) 94%, transparent);
+  backdrop-filter: blur(10px);
+  overflow: auto;
+  padding: clamp(16px, 4vmin, 48px);
+}
+
+.deck__overview[hidden] {
+  display: none;
+}
+
+.deck__overview-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.deck__overview-title {
+  margin: 0;
+  font-size: clamp(16px, 2.4vmin, 22px);
+  font-weight: 700;
+}
+
+.deck__overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: clamp(12px, 1.8vmin, 20px);
+}
+
+.deck__thumb {
+  position: relative;
+  appearance: none;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--card);
+  cursor: pointer;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  text-align: left;
+}
+
+.deck__thumb:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+}
+
+.deck__thumb.is-active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+.deck__thumb-stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  container-type: size;
+  overflow: hidden;
+}
+
+.deck__thumb-stage .slide {
+  cursor: pointer;
+}
+
+.deck__thumb-label {
+  position: absolute;
+  right: 8px;
+  bottom: 6px;
+  font-size: 11px;
+  color: var(--muted);
+  background: color-mix(in srgb, var(--bg) 72%, transparent);
+  border-radius: 6px;
+  padding: 1px 6px;
+}
+
+/* ------------------------------ 移动端 ------------------------------ */
+@media (max-width: 720px) {
+  .deck__controls {
+    gap: 2px;
+    padding: 6px 8px;
+    bottom: 8px;
+  }
+
+  .deck__btn {
+    padding: 8px 9px;
+    font-size: 12px;
+  }
+
+  .deck__btn__label {
+    display: none;
+  }
+
+  .deck__hint {
+    display: none;
+  }
+
+  .deck__overview-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+}
+
+/* ------------------------------ 打印 ------------------------------ */
+@media print {
+  html,
+  body {
+    height: auto;
+    overflow: visible;
+    background: #fff;
+  }
+
+  @page {
+    size: landscape;
+    margin: 0;
+  }
+
+  .deck {
+    height: auto;
+    display: block;
+  }
+
+  .deck__overview {
+    display: none !important;
+  }
+
+  .deck__controls,
+  .deck__progress,
+  .deck__hint,
+  .no-print {
+    display: none !important;
+  }
+}
+
+</style>
+</head>
+<body data-theme="midnight">
+<div class="deck" id="deck" data-anim="on">
+  <div class="deck__progress"><span id="progress-bar"></span></div>
+  <div class="deck__viewport" id="viewport">
+    <div class="stage" id="stage" data-inset="false">
+<section class="slide" data-layout="cover" data-density="normal" data-index="0" aria-label="企业级 AI 落地的三个阶段">
+  <header class="slide__head">
+    <h1 class="slide__title">企业级 AI 落地的三个阶段</h1>
+    <p class="slide__subtitle">从试点验证到价值闭环：稳定、可控、可衡量的落地路径</p>
+  </header>
+  <div class="slide__body"><ul class="slide__bullets"><li style="--i:0">试点验证 · 规模化接入 · 价值闭环</li><li style="--i:1">风险治理与组织保障并重</li></ul></div>
+  <footer class="slide__foot"><span class="slide__brand">企业级 AI 落地的三个阶段</span><span class="slide__page">1 / 8</span></footer>
+  <aside class="slide__notes"><span class="slide__notes-tag">讲者备注</span>开场点明主题：过去两年大模型的关注焦点已从“能不能用”转向“如何稳定、可控、可衡量地用”。今天用三个阶段讲清落地路径，并补充风险治理与组织建议两个支撑面。</aside>
+</section>
+<section class="slide" data-layout="section" data-density="normal" data-index="1" aria-label="三个阶段">
+  <header class="slide__head">
+    <h2 class="slide__title">三个阶段</h2>
+    <p class="slide__subtitle">从跑通链路，到平台复用，再到业务价值兑现</p>
+  </header>
+  
+  <footer class="slide__foot"><span class="slide__brand">企业级 AI 落地的三个阶段</span><span class="slide__page">2 / 8</span></footer>
+  <aside class="slide__notes"><span class="slide__notes-tag">讲者备注</span>这一页做结构预告。三个阶段的边界要讲清楚：第一阶段解决“能不能跑通”，第二阶段解决“能不能规模化复用”，第三阶段解决“值不值得继续投入”。后面逐阶段展开。</aside>
+</section>
+<section class="slide" data-layout="bullets" data-density="compact" data-index="2" aria-label="第一阶段：试点验证">
+  <header class="slide__head">
+    <h2 class="slide__title">第一阶段：试点验证</h2>
+  </header>
+  <div class="slide__body"><ul class="slide__bullets"><li style="--i:0">选择<strong>高频、低风险、数据可获取</strong>的场景</li><li style="--i:1">示例：客服知识检索、合同要素提取、会议纪要生成</li><li style="--i:2">目标：4-6 周跑通从数据到上线的完整链路</li><li style="--i:3">沉淀<strong>评测集与基线指标</strong>，不追求效果上限</li><li style="--i:4">常见失败原因：场景过大、指标模糊、业务方参与不足</li></ul></div>
+  <footer class="slide__foot"><span class="slide__brand">企业级 AI 落地的三个阶段</span><span class="slide__page">3 / 8</span></footer>
+  <aside class="slide__notes"><span class="slide__notes-tag">讲者备注</span>强调这一阶段的目标不是效果上限，而是链路完整性与可衡量的基线。提醒听众最常见的三个坑：场景选太大、指标说不清、业务方只在验收时出现。建议现场举一个客户的具体例子。</aside>
+</section>
+<section class="slide" data-layout="stats" data-density="compact" data-index="3" aria-label="第二阶段：规模化接入">
+  <header class="slide__head">
+    <h2 class="slide__title">第二阶段：规模化接入</h2>
+  </header>
+  <div class="slide__body"><div class="slide__stats"><div class="slide__stat">
+        <div class="slide__stat-value">60%+</div>
+        <div class="slide__stat-label">统一网关使接入周期缩短</div>
+      </div><div class="slide__stat">
+        <div class="slide__stat-value">35%</div>
+        <div class="slide__stat-label">Token 成本平均下降</div>
+      </div></div></div>
+  <footer class="slide__foot"><span class="slide__brand">企业级 AI 落地的三个阶段</span><span class="slide__page">4 / 8</span></footer>
+  <aside class="slide__notes"><span class="slide__notes-tag">讲者备注</span>这里突出两个经验数据：统一网关让接入周期缩短 60% 以上，Token 成本平均下降 35%。但要提醒，平台能力不是一次性建成，而是伴随场景接入逐步沉淀，同时安全合规要求必须前置明确。</aside>
+</section>
+<section class="slide" data-layout="bullets" data-density="compact" data-index="4" aria-label="第三阶段：价值闭环">
+  <header class="slide__head">
+    <h2 class="slide__title">第三阶段：价值闭环</h2>
+  </header>
+  <div class="slide__body"><ul class="slide__bullets"><li style="--i:0">把 AI 能力嵌入<strong>业务流程的关键节点</strong></li><li style="--i:1">用业务指标衡量：工单一次解决率、合同审核人时、内容生产周期</li><li style="--i:2">人工兜底设计成流程的一部分，而非异常处理</li><li style="--i:3">每个场景设定<strong>可回滚的开关与责任人</strong></li><li style="--i:4">用 A/B 实验持续对比模型版本与提示词版本</li></ul></div>
+  <footer class="slide__foot"><span class="slide__brand">企业级 AI 落地的三个阶段</span><span class="slide__page">5 / 8</span></footer>
+  <aside class="slide__notes"><span class="slide__notes-tag">讲者备注</span>这一页的核心是衡量口径的切换：从模型指标转向业务指标。三条共性做法要点出来——人工兜底进流程、可回滚开关加明确责任人、持续做 A/B 对比。可追问听众：你们现在用哪个业务指标验收 AI？</aside>
+</section>
+<section class="slide" data-layout="two-column" data-density="compact" data-index="5" aria-label="风险识别与缓解手段">
+  <header class="slide__head">
+    <h2 class="slide__title">风险识别与缓解手段</h2>
+  </header>
+  <div class="slide__body"><div class="slide__columns"><div class="slide__column">
+        <h3 class="slide__column-title">四类核心风险</h3>
+        <ul class="slide__bullets"><li style="--i:0">数据泄露与越权访问</li><li style="--i:1">模型幻觉导致错误决策</li><li style="--i:2">成本失控</li><li style="--i:3">合规审计缺口</li></ul>
+      </div><div class="slide__column">
+        <h3 class="slide__column-title">对应缓解手段</h3>
+        <ul class="slide__bullets"><li style="--i:0">最小权限的数据接入</li><li style="--i:1">检索增强与引用溯源</li><li style="--i:2">按部门配额与预算告警</li><li style="--i:3">全链路日志留存</li></ul>
+      </div></div></div>
+  <footer class="slide__foot"><span class="slide__brand">企业级 AI 落地的三个阶段</span><span class="slide__page">6 / 8</span></footer>
+  <aside class="slide__notes"><span class="slide__notes-tag">讲者备注</span>风险与缓解一一对应讲，避免只讲风险不给方案。重点强调检索增强与引用溯源是抑制幻觉的关键工程手段，配额与预算告警则解决成本失控，日志留存是合规审计的基础。</aside>
+</section>
+<section class="slide" data-layout="bullets" data-density="compact" data-index="6" aria-label="组织建议：把经验变成资产">
+  <header class="slide__head">
+    <h2 class="slide__title">组织建议：把经验变成资产</h2>
+  </header>
+  <div class="slide__body"><ul class="slide__bullets"><li style="--i:0">设立跨职能 AI 工作组：业务、工程、数据、法务、安全</li><li style="--i:1"><strong>双周评审</strong>一次场景优先级，统一推进节奏</li><li style="--i:2">建立内部案例库，记录每次试点的方法论与踩坑</li><li style="--i:3">把个人经验沉淀为可复用的组织资产</li></ul></div>
+  <footer class="slide__foot"><span class="slide__brand">企业级 AI 落地的三个阶段</span><span class="slide__page">7 / 8</span></footer>
+  <aside class="slide__notes"><span class="slide__notes-tag">讲者备注</span>组织部分是很多企业最容易忽略的一环。跨职能工作组保证决策不被单一部门视角主导，双周评审保证优先级动态调整，案例库则让第二个场景不必从零开始，降低整体试错成本。</aside>
+</section>
+<section class="slide" data-layout="closing" data-density="compact" data-index="7" aria-label="总结与行动">
+  <header class="slide__head">
+    <h1 class="slide__title">总结与行动</h1>
+    <p class="slide__subtitle">AI 落地的竞争，最终不是模型参数的竞争，而是流程与组织能力的竞争</p>
+  </header>
+  <div class="slide__body"><ul class="slide__bullets"><li style="--i:0">选定首个高频低风险场景，4-6 周跑通闭环</li><li style="--i:1">成立跨职能工作组，前置明确数据与合规边界</li><li style="--i:2">以业务指标验收，配套可回滚开关与责任人</li></ul></div>
+  <footer class="slide__foot"><span class="slide__brand">企业级 AI 落地的三个阶段</span><span class="slide__page">8 / 8</span></footer>
+  <aside class="slide__notes"><span class="slide__notes-tag">讲者备注</span>收尾回到主线：三个阶段、一类风险、一套组织机制。行动建议给三条，要求听众会后明确第一个试点场景、工作组成员与验收指标。最后用金句收束，把注意力从模型转向流程与组织能力。</aside>
+</section>
+    </div>
+  </div>
+
+  <div class="deck__hint no-print">← → 翻页 · F 全屏 · O 总览 · T 换主题 · N 备注 · P 打印</div>
+
+  <div class="deck__controls no-print" role="toolbar" aria-label="演示控制">
+    <button class="deck__btn" type="button" data-action="prev" aria-label="上一页">‹ <span class="deck__btn__label">上一页</span></button>
+    <span class="deck__counter" id="page-counter">1 / 8</span>
+    <button class="deck__btn" type="button" data-action="next" aria-label="下一页"><span class="deck__btn__label">下一页</span> ›</button>
+    <span class="deck__divider" aria-hidden="true"></span>
+    <span id="theme-bar" role="group" aria-label="配色主题"></span>
+    <span class="deck__divider" aria-hidden="true"></span>
+    <button class="deck__btn deck__btn--icon" type="button" data-action="overview" title="总览 (O)" aria-label="总览">▦</button>
+    <button class="deck__btn deck__btn--icon" type="button" data-action="notes" title="讲者备注 (N)" aria-label="讲者备注">🗒</button>
+    <button class="deck__btn deck__btn--icon" type="button" data-action="print" title="打印 / 导出 PDF (P)" aria-label="打印">🖨</button>
+    <button class="deck__btn deck__btn--icon" type="button" data-action="fullscreen" title="全屏 (F)" aria-label="全屏">⛶</button>
+  </div>
+
+  <div class="deck__overview" id="overview" hidden>
+    <div class="deck__overview-head">
+      <h2 class="deck__overview-title">企业级 AI 落地的三个阶段 · 共 8 页</h2>
+      <button class="deck__btn" type="button" data-action="overview">关闭总览 (Esc)</button>
+    </div>
+    <div class="deck__overview-grid" id="overview-grid"></div>
+  </div>
+</div>
+
+<script type="module">
+/* ================= 渲染器（由 shared/slide-render.js 内联） ================= */
+/**
+ * 幻灯片渲染器（前后端共用，纯函数，无任何 import）
+ * ------------------------------------------------------------------
+ * ⚠️ 约束：本文件必须保持「零 import / 零依赖」并且只使用 `export function`
+ * 声明，因为导出独立 HTML 时会把源码内联进 <script type="module">，
+ * 只做 `export ` 关键字剥离（见 server/export.js）。
+ *
+ * 站内（React 用 dangerouslySetInnerHTML）与导出 HTML 使用同一个渲染函数，
+ * 保证「所见即所得」。
+ */
+
+/** 支持的版式 */
+const LAYOUTS = [
+  'cover',
+  'section',
+  'bullets',
+  'two-column',
+  'stats',
+  'timeline',
+  'quote',
+  'closing',
+];
+
+/**
+ * HTML 转义，防止模型输出或用户文案破坏结构。
+ * @param {unknown} value
+ * @returns {string}
+ */
+function escapeHtml(value) {
+  if (value === null || value === undefined) return '';
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/**
+ * 轻量富文本：支持 **加粗** 与 `行内代码`（先转义再替换，安全）。
+ * @param {unknown} value
+ * @returns {string}
+ */
+function richText(value) {
+  let out = escapeHtml(value);
+  out = out.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  out = out.replace(/`([^`]+)`/g, '<code>$1</code>');
+  return out;
+}
+
+/**
+ * 取字符串数组，过滤空值并限制条数。
+ * @param {unknown} value
+ * @param {number} [max]
+ * @returns {string[]}
+ */
+function toStringList(value, max = 8) {
+  if (!Array.isArray(value)) return [];
+  const list = value
+    .map((item) => {
+      if (typeof item === 'string') return item.trim();
+      if (item && typeof item === 'object') {
+        // 容错：模型偶尔会输出 {text: "..."} / {title: "..."}
+        const t = item.text ?? item.title ?? item.label ?? item.value ?? '';
+        const extra = item.desc ?? item.description ?? item.detail ?? '';
+        return String(t + (extra ? `：${extra}` : '')).trim();
+      }
+      return String(item ?? '').trim();
+    })
+    .filter(Boolean);
+  return list.slice(0, max);
+}
+
+/**
+ * 推断版式（模型没给或给错时兜底）。
+ * @param {Record<string, any>} slide
+ * @param {number} index
+ * @returns {string}
+ */
+function resolveLayout(slide, index = 0) {
+  const declared = typeof slide?.layout === 'string' ? slide.layout.trim().toLowerCase() : '';
+  if (LAYOUTS.includes(declared)) return declared;
+  if (slide?.quote && (slide.quote.text || typeof slide.quote === 'string')) return 'quote';
+  if (Array.isArray(slide?.stats) && slide.stats.length) return 'stats';
+  if (Array.isArray(slide?.timeline) && slide.timeline.length) return 'timeline';
+  if (Array.isArray(slide?.columns) && slide.columns.length) return 'two-column';
+  if (toStringList(slide?.bullets).length) return 'bullets';
+  if (index === 0 && (slide?.subtitle || slide?.meta)) return 'cover';
+  return 'section';
+}
+
+/**
+ * 计算内容密度，供 CSS 自适应字号。
+ * @param {Record<string, any>} slide
+ * @param {string} layout
+ * @returns {'normal'|'compact'|'dense'}
+ */
+function resolveDensity(slide, layout) {
+  const bullets = toStringList(slide?.bullets, 99);
+  const columns = Array.isArray(slide?.columns) ? slide.columns : [];
+  let units = bullets.length;
+  let chars = (String(slide?.title || '') + String(slide?.subtitle || '')).length;
+  for (const b of bullets) chars += b.length;
+  for (const col of columns) {
+    const items = toStringList(col?.items, 99);
+    units += items.length / 2;
+    for (const it of items) chars += it.length;
+    chars += String(col?.heading || '').length;
+  }
+  if (Array.isArray(slide?.stats)) units += slide.stats.length * 0.5;
+  if (Array.isArray(slide?.timeline)) units += slide.timeline.length * 0.6;
+  if (layout === 'quote') {
+    chars = String(slide?.quote?.text || slide?.quote || '').length;
+    units = 1;
+  }
+  const score = units + chars / 55;
+  if (score >= 7.5) return 'dense';
+  if (score >= 4.5) return 'compact';
+  return 'normal';
+}
+
+/**
+ * @typedef {Object} RenderOptions
+ * @property {number} [index] 0 基序号
+ * @property {number} [total] 总页数
+ * @property {string} [brand] 页脚品牌/标题
+ * @property {boolean} [notes] 是否渲染讲者备注（默认渲染，导出端用 CSS 控制显隐）
+ */
+
+/**
+ * 渲染单页幻灯片为 HTML 字符串。
+ * @param {Record<string, any>} rawSlide
+ * @param {RenderOptions} [options]
+ * @returns {string}
+ */
+function renderSlide(rawSlide, options = {}) {
+  const slide = rawSlide && typeof rawSlide === 'object' ? rawSlide : {};
+  const index = Number.isFinite(options.index) ? options.index : 0;
+  const total = Number.isFinite(options.total) ? options.total : 0;
+  const brand = options.brand || '';
+  const layout = resolveLayout(slide, index);
+  const density = resolveDensity(slide, layout);
+
+  const title = slide.title ?? slide.heading ?? '';
+  const subtitle = slide.subtitle ?? slide.sub ?? '';
+  const bullets = toStringList(slide.bullets);
+  const columns = Array.isArray(slide.columns) ? slide.columns.slice(0, 3) : [];
+  const stats = Array.isArray(slide.stats) ? slide.stats.slice(0, 4) : [];
+  const timeline = Array.isArray(slide.timeline) ? slide.timeline.slice(0, 6) : [];
+  const quote = slide.quote && typeof slide.quote === 'object' ? slide.quote : { text: slide.quote || '' };
+  const notes = typeof slide.notes === 'string' ? slide.notes.trim() : '';
+
+  const head = [];
+  if (slide.eyebrow) {
+    head.push(`<p class="slide__eyebrow">${richText(slide.eyebrow)}</p>`);
+  }
+  if (title) {
+    const tag = layout === 'cover' || layout === 'closing' ? 'h1' : 'h2';
+    head.push(`<${tag} class="slide__title">${richText(title)}</${tag}>`);
+  }
+  if (subtitle) head.push(`<p class="slide__subtitle">${richText(subtitle)}</p>`);
+
+  let body = '';
+  if (layout === 'bullets' || layout === 'cover' || layout === 'closing' || layout === 'section') {
+    if (bullets.length) {
+      body = `<ul class="slide__bullets">${bullets
+        .map((b, i) => `<li style="--i:${i}">${richText(b)}</li>`)
+        .join('')}</ul>`;
+    }
+  } else if (layout === 'two-column') {
+    body = `<div class="slide__columns">${columns
+      .map((col) => {
+        const items = toStringList(col?.items ?? col?.bullets ?? col?.points, 6);
+        return `<div class="slide__column">
+        ${col?.heading ? `<h3 class="slide__column-title">${richText(col.heading)}</h3>` : ''}
+        <ul class="slide__bullets">${items.map((it, i) => `<li style="--i:${i}">${richText(it)}</li>`).join('')}</ul>
+      </div>`;
+      })
+      .join('')}</div>`;
+  } else if (layout === 'stats') {
+    body = `<div class="slide__stats">${stats
+      .map(
+        (s) => `<div class="slide__stat">
+        <div class="slide__stat-value">${richText(s?.value ?? '')}</div>
+        <div class="slide__stat-label">${richText(s?.label ?? s?.name ?? '')}</div>
+      </div>`,
+      )
+      .join('')}</div>`;
+  } else if (layout === 'timeline') {
+    body = `<ol class="slide__timeline">${timeline
+      .map(
+        (t) => `<li class="slide__timeline-item">
+        <span class="slide__timeline-dot" aria-hidden="true"></span>
+        <div class="slide__timeline-time">${richText(t?.time ?? t?.date ?? '')}</div>
+        <div class="slide__timeline-text">${richText(t?.text ?? t?.title ?? '')}</div>
+      </li>`,
+      )
+      .join('')}</ol>`;
+  } else if (layout === 'quote') {
+    body = `<blockquote class="slide__quote">
+      <p class="slide__quote-text">${richText(quote?.text ?? quote ?? '')}</p>
+      ${quote?.author ? `<footer class="slide__quote-author">—— ${richText(quote.author)}</footer>` : ''}
+    </blockquote>`;
+  }
+
+  const footerBits = [];
+  if (brand) footerBits.push(`<span class="slide__brand">${escapeHtml(brand)}</span>`);
+  footerBits.push(`<span class="slide__page">${total ? `${index + 1} / ${total}` : `${index + 1}`}</span>`);
+
+  return `<section class="slide" data-layout="${layout}" data-density="${density}" data-index="${index}" aria-label="${escapeHtml(
+    String(title || `第 ${index + 1} 页`),
+  )}">
+  ${
+    head.length
+      ? `<header class="slide__head">
+    ${head.join('\n    ')}
+  </header>`
+      : ''
+  }
+  ${body ? `<div class="slide__body">${body}</div>` : ''}
+  <footer class="slide__foot">${footerBits.join('')}</footer>
+  ${notes ? `<aside class="slide__notes"><span class="slide__notes-tag">讲者备注</span>${richText(notes)}</aside>` : ''}
+</section>`;
+}
+
+/**
+ * 批量渲染。
+ * @param {Array<Record<string, any>>} slides
+ * @param {RenderOptions} [options]
+ * @returns {string}
+ */
+function renderSlides(slides, options = {}) {
+  const list = Array.isArray(slides) ? slides : [];
+  return list.map((s, i) => renderSlide(s, { ...options, index: i, total: list.length })).join('\n');
+}
+
+/** 模板骨架 */
+const LAYOUT_TEMPLATES = LAYOUTS;
+
+
+/* ================= 数据 ================= */
+const DECK = {"title":"企业级 AI 落地的三个阶段","subtitle":"从试点验证到价值闭环：稳定、可控、可衡量的落地路径","slideCount":8,"slides":[{"layout":"cover","title":"企业级 AI 落地的三个阶段","subtitle":"从试点验证到价值闭环：稳定、可控、可衡量的落地路径","notes":"开场点明主题：过去两年大模型的关注焦点已从“能不能用”转向“如何稳定、可控、可衡量地用”。今天用三个阶段讲清落地路径，并补充风险治理与组织建议两个支撑面。","bullets":["试点验证 · 规模化接入 · 价值闭环","风险治理与组织保障并重"]},{"layout":"section","title":"三个阶段","subtitle":"从跑通链路，到平台复用，再到业务价值兑现","notes":"这一页做结构预告。三个阶段的边界要讲清楚：第一阶段解决“能不能跑通”，第二阶段解决“能不能规模化复用”，第三阶段解决“值不值得继续投入”。后面逐阶段展开。"},{"layout":"bullets","title":"第一阶段：试点验证","subtitle":"","notes":"强调这一阶段的目标不是效果上限，而是链路完整性与可衡量的基线。提醒听众最常见的三个坑：场景选太大、指标说不清、业务方只在验收时出现。建议现场举一个客户的具体例子。","bullets":["选择**高频、低风险、数据可获取**的场景","示例：客服知识检索、合同要素提取、会议纪要生成","目标：4-6 周跑通从数据到上线的完整链路","沉淀**评测集与基线指标**，不追求效果上限","常见失败原因：场景过大、指标模糊、业务方参与不足"]},{"layout":"stats","title":"第二阶段：规模化接入","subtitle":"","notes":"这里突出两个经验数据：统一网关让接入周期缩短 60% 以上，Token 成本平均下降 35%。但要提醒，平台能力不是一次性建成，而是伴随场景接入逐步沉淀，同时安全合规要求必须前置明确。","bullets":["把试点能力抽象为平台能力：统一模型网关、提示词与版本管理、评测与灰度发布、成本与配额治理","关键角色：平台团队与安全合规团队","提前明确数据分级、脱敏策略与审计要求"],"stats":[{"value":"60%+","label":"统一网关使接入周期缩短"},{"value":"35%","label":"Token 成本平均下降"}]},{"layout":"bullets","title":"第三阶段：价值闭环","subtitle":"","notes":"这一页的核心是衡量口径的切换：从模型指标转向业务指标。三条共性做法要点出来——人工兜底进流程、可回滚开关加明确责任人、持续做 A/B 对比。可追问听众：你们现在用哪个业务指标验收 AI？","bullets":["把 AI 能力嵌入**业务流程的关键节点**","用业务指标衡量：工单一次解决率、合同审核人时、内容生产周期","人工兜底设计成流程的一部分，而非异常处理","每个场景设定**可回滚的开关与责任人**","用 A/B 实验持续对比模型版本与提示词版本"]},{"layout":"two-column","title":"风险识别与缓解手段","subtitle":"","notes":"风险与缓解一一对应讲，避免只讲风险不给方案。重点强调检索增强与引用溯源是抑制幻觉的关键工程手段，配额与预算告警则解决成本失控，日志留存是合规审计的基础。","columns":[{"heading":"四类核心风险","items":["数据泄露与越权访问","模型幻觉导致错误决策","成本失控","合规审计缺口"]},{"heading":"对应缓解手段","items":["最小权限的数据接入","检索增强与引用溯源","按部门配额与预算告警","全链路日志留存"]}]},{"layout":"bullets","title":"组织建议：把经验变成资产","subtitle":"","notes":"组织部分是很多企业最容易忽略的一环。跨职能工作组保证决策不被单一部门视角主导，双周评审保证优先级动态调整，案例库则让第二个场景不必从零开始，降低整体试错成本。","bullets":["设立跨职能 AI 工作组：业务、工程、数据、法务、安全","**双周评审**一次场景优先级，统一推进节奏","建立内部案例库，记录每次试点的方法论与踩坑","把个人经验沉淀为可复用的组织资产"]},{"layout":"closing","title":"总结与行动","subtitle":"AI 落地的竞争，最终不是模型参数的竞争，而是流程与组织能力的竞争","notes":"收尾回到主线：三个阶段、一类风险、一套组织机制。行动建议给三条，要求听众会后明确第一个试点场景、工作组成员与验收指标。最后用金句收束，把注意力从模型转向流程与组织能力。","bullets":["选定首个高频低风险场景，4-6 周跑通闭环","成立跨职能工作组，前置明确数据与合规边界","以业务指标验收，配套可回滚开关与责任人"]}],"meta":{"generatedAt":"2026-09-24T14:34:16.713Z","declaredSlideCount":8}};
+const THEMES = [{"id":"midnight","name":"深空蓝","desc":"深色科技风，适合产品发布与技术分享","accent":"#6ea8fe","bg":"#070b18"},{"id":"paper","name":"极简白","desc":"明亮干净的商务风，适合汇报与提案","accent":"#2563eb","bg":"#eef1f6"},{"id":"ocean","name":"深海青","desc":"青绿渐变的清爽科技风","accent":"#22d3ee","bg":"#04141a"},{"id":"sunset","name":"落日暖阳","desc":"暖色高对比，适合创意与营销主题","accent":"#fb7185","bg":"#170a12"},{"id":"forest","name":"青竹绿","desc":"自然清新的浅色风，适合教育与方法论","accent":"#15803d","bg":"#e9f1ea"},{"id":"graphite","name":"石墨黑","desc":"黑白极简，适合设计与严肃场合","accent":"#e5e7eb","bg":"#0b0b0c"}];
+
+/* ================= 运行时（由 shared/export-runtime.js 内联） ================= */
+/**
+ * 导出 HTML 内的演示运行时（纯浏览器脚本，无 import/export）
+ * ------------------------------------------------------------------
+ * 会被 server/export.js 原样内联进 <script type="module">，
+ * 与服务端渲染好的 slide 结构配合，提供：
+ * 键盘翻页 / 点击翻页 / 触摸滑动 / 全屏 / 总览 / 主题切换 / 讲者备注 / 打印 PDF
+ */
+(() => {
+  const deckEl = document.getElementById('deck');
+  const stage = document.getElementById('stage');
+  const viewport = document.getElementById('viewport');
+  const bar = document.getElementById('progress-bar');
+  const counter = document.getElementById('page-counter');
+  const overview = document.getElementById('overview');
+  const overviewGrid = document.getElementById('overview-grid');
+  const themeBar = document.getElementById('theme-bar');
+  if (!deckEl || !stage) return;
+
+  const slides = Array.from(stage.querySelectorAll('.slide'));
+  if (!slides.length) return;
+
+  const store = {
+    get(key, fallback) {
+      try {
+        const v = window.localStorage.getItem(key);
+        return v === null ? fallback : v;
+      } catch {
+        return fallback;
+      }
+    },
+    set(key, value) {
+      try {
+        window.localStorage.setItem(key, value);
+      } catch {
+        /* file:// 下可能被禁用，忽略 */
+      }
+    },
+  };
+
+  const total = slides.length;
+  let index = 0;
+
+  const parseHash = () => {
+    const m = String(location.hash || '').match(/(\d+)/);
+    if (!m) return 0;
+    return Math.min(total, Math.max(1, Number(m[1]))) - 1;
+  };
+
+  const render = (next, options = {}) => {
+    index = Math.min(total - 1, Math.max(0, next));
+    slides.forEach((slide, i) => {
+      const active = i === index;
+      slide.classList.toggle('is-active', active);
+      slide.setAttribute('aria-hidden', active ? 'false' : 'true');
+    });
+    if (bar) bar.style.width = `${((index + 1) / total) * 100}%`;
+    if (counter) counter.textContent = `${index + 1} / ${total}`;
+    if (overviewGrid) {
+      Array.from(overviewGrid.children).forEach((el, i) => el.classList.toggle('is-active', i === index));
+    }
+    if (!options.silent) {
+      try {
+        history.replaceState(null, '', `#/${index + 1}`);
+      } catch {
+        /* 某些环境（file://）可能不允许，忽略 */
+      }
+    }
+  };
+
+  const go = (delta) => render(index + delta);
+  const goTo = (i) => render(i);
+  const toggleFullscreen = () => {
+    const target = viewport || stage;
+    if (!document.fullscreenElement) {
+      (target.requestFullscreen ? target.requestFullscreen() : Promise.reject()).catch(() => {
+        document.documentElement.classList.toggle('is-pseudo-fullscreen');
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  };
+
+  const buildOverview = () => {
+    if (!overviewGrid) return;
+    if (overviewGrid.childElementCount) return;
+    slides.forEach((slide, i) => {
+      const item = document.createElement('button');
+      item.type = 'button';
+      item.className = 'deck__thumb';
+      item.setAttribute('aria-label', `跳到第 ${i + 1} 页`);
+      const inner = document.createElement('div');
+      inner.className = 'deck__thumb-stage';
+      const clone = slide.cloneNode(true);
+      clone.classList.add('is-active');
+      inner.appendChild(clone);
+      const label = document.createElement('span');
+      label.className = 'deck__thumb-label';
+      label.textContent = `${i + 1}`;
+      item.appendChild(inner);
+      item.appendChild(label);
+      item.addEventListener('click', () => {
+        goTo(i);
+        toggleOverview(false);
+      });
+      overviewGrid.appendChild(item);
+    });
+    render(index, { silent: true });
+  };
+
+  const toggleOverview = (force) => {
+    if (!overview) return;
+    const show = force === undefined ? overview.hidden : force;
+    if (show) buildOverview();
+    overview.hidden = !show;
+    deckEl.classList.toggle('is-overview', show);
+  };
+
+  const setTheme = (id) => {
+    document.body.setAttribute('data-theme', id);
+    store.set('ppt-theme', id);
+    if (themeBar) {
+      Array.from(themeBar.querySelectorAll('[data-theme-id]')).forEach((btn) => {
+        btn.classList.toggle('is-active', btn.getAttribute('data-theme-id') === id);
+      });
+    }
+  };
+
+  const cycleTheme = () => {
+    const ids = THEMES.map((t) => t.id);
+    const current = document.body.getAttribute('data-theme') || ids[0];
+    const next = ids[(ids.indexOf(current) + 1) % ids.length];
+    setTheme(next);
+  };
+
+  const toggleNotes = () => {
+    document.body.classList.toggle('show-notes');
+    store.set('ppt-notes', document.body.classList.contains('show-notes') ? '1' : '0');
+  };
+
+  const printDeck = () => {
+    deckEl.setAttribute('data-mode', 'flow');
+    document.body.classList.add('is-print');
+    const cleanup = () => {
+      deckEl.removeAttribute('data-mode');
+      document.body.classList.remove('is-print');
+      window.removeEventListener('afterprint', cleanup);
+    };
+    window.addEventListener('afterprint', cleanup);
+    window.setTimeout(() => {
+      window.print();
+      window.setTimeout(cleanup, 800);
+    }, 120);
+  };
+
+  // ------------------------------ 事件绑定 ------------------------------
+  document.addEventListener('keydown', (event) => {
+    if (event.defaultPrevented) return;
+    const key = event.key;
+    const lower = key.toLowerCase();
+    if (event.metaKey || event.ctrlKey || event.altKey) return;
+
+    if (['ArrowRight', 'ArrowDown', 'PageDown', ' ', 'Enter'].includes(key)) {
+      event.preventDefault();
+      go(1);
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'].includes(key)) {
+      event.preventDefault();
+      go(-1);
+    } else if (key === 'Home') {
+      event.preventDefault();
+      goTo(0);
+    } else if (key === 'End') {
+      event.preventDefault();
+      goTo(total - 1);
+    } else if (lower === 'f') {
+      toggleFullscreen();
+    } else if (lower === 'o') {
+      toggleOverview();
+    } else if (lower === 't') {
+      cycleTheme();
+    } else if (lower === 'n') {
+      toggleNotes();
+    } else if (lower === 'p') {
+      printDeck();
+    } else if (key === 'Escape') {
+      toggleOverview(false);
+    } else if (/^[1-9]$/.test(key)) {
+      goTo(Number(key) - 1);
+    }
+  });
+
+  document.querySelectorAll('[data-action]').forEach((el) => {
+    el.addEventListener('click', (event) => {
+      event.preventDefault();
+      const action = el.getAttribute('data-action');
+      if (action === 'prev') go(-1);
+      else if (action === 'next') go(1);
+      else if (action === 'fullscreen') toggleFullscreen();
+      else if (action === 'overview') toggleOverview();
+      else if (action === 'theme') cycleTheme();
+      else if (action === 'notes') toggleNotes();
+      else if (action === 'print') printDeck();
+    });
+  });
+
+  // 点击舞台：左 20% 上一页，其余下一页
+  stage.addEventListener('click', (event) => {
+    const rect = stage.getBoundingClientRect();
+    const ratio = (event.clientX - rect.left) / Math.max(1, rect.width);
+    go(ratio < 0.2 ? -1 : 1);
+  });
+
+  // 触摸滑动
+  let touchStartX = 0;
+  let touchStartY = 0;
+  stage.addEventListener(
+    'touchstart',
+    (event) => {
+      touchStartX = event.touches[0].clientX;
+      touchStartY = event.touches[0].clientY;
+    },
+    { passive: true },
+  );
+  stage.addEventListener(
+    'touchend',
+    (event) => {
+      const dx = event.changedTouches[0].clientX - touchStartX;
+      const dy = event.changedTouches[0].clientY - touchStartY;
+      if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) go(dx < 0 ? 1 : -1);
+    },
+    { passive: true },
+  );
+
+  // 鼠标滚轮（节流）
+  let wheelLock = 0;
+  stage.addEventListener(
+    'wheel',
+    (event) => {
+      const now = Date.now();
+      if (now - wheelLock < 700) return;
+      if (Math.abs(event.deltaY) < 12) return;
+      wheelLock = now;
+      go(event.deltaY > 0 ? 1 : -1);
+    },
+    { passive: true },
+  );
+
+  window.addEventListener('hashchange', () => {
+    const target = parseHash();
+    if (target !== index) render(target, { silent: true });
+  });
+
+  // 空闲时淡化控制条
+  let idleTimer = 0;
+  const wake = () => {
+    deckEl.classList.remove('is-idle');
+    window.clearTimeout(idleTimer);
+    idleTimer = window.setTimeout(() => deckEl.classList.add('is-idle'), 3200);
+  };
+  ['mousemove', 'touchstart', 'keydown'].forEach((evt) => window.addEventListener(evt, wake, { passive: true }));
+
+  if (themeBar) {
+    THEMES.forEach((theme) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'deck__theme-dot';
+      btn.setAttribute('data-theme-id', theme.id);
+      btn.setAttribute('title', `${theme.name} · ${theme.desc}`);
+      btn.setAttribute('aria-label', `切换到主题 ${theme.name}`);
+      btn.style.setProperty('--dot', theme.accent);
+      btn.style.setProperty('--dot-bg', theme.bg);
+      btn.addEventListener('click', () => setTheme(theme.id));
+      themeBar.appendChild(btn);
+    });
+  }
+
+  if (store.get('ppt-notes', '0') === '1') document.body.classList.add('show-notes');
+  setTheme(store.get('ppt-theme', document.body.getAttribute('data-theme') || THEMES[0].id));
+
+  document.title = DECK.title ? `${DECK.title} · 演示` : document.title;
+
+  render(parseHash(), { silent: true });
+  wake();
+})();
+
+</script>
+</body>
+</html>

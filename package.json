@@ -1,0 +1,35 @@
+{
+  "name": "ai-web-ppt-generator",
+  "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "description": "AI 网页 PPT 生成器：粘贴长文案，流式调用大模型拆解为多页网页 PPT，可全屏演示、切换主题、导出独立 HTML。",
+  "engines": {
+    "node": ">=20.6"
+  },
+  "scripts": {
+    "dev": "node server/dev.js",
+    "build": "node tools/vite-cli.mjs build",
+    "start": "node server/index.js",
+    "share": "node tools/share.mjs",
+    "test": "node --test --test-isolation=none --test-timeout=60000 test/unit.test.mjs test/api.test.mjs && node --test --test-isolation=none --test-timeout=60000 test/auth.test.mjs",
+    "test:e2e": "node test/e2e.mjs",
+    "test:prod": "node test/smoke-prod.mjs",
+    "test:live": "node test/live-ai.mjs",
+    "typecheck": "tsc --noEmit -p web/tsconfig.json"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.1",
+    "@vitejs/plugin-react": "^6.1.1",
+    "typescript": "^5.9.3",
+    "vite": "^8.3.0",
+    "ws": "^8.21.3"
+  }
+}

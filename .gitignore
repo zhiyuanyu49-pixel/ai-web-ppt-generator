@@ -1,0 +1,29 @@
+# 依赖
+node_modules/
+.npm-cache/
+
+# 环境变量（包含 API Key，切勿提交）
+.env
+.env.local
+
+# 构建产物
+dist/
+
+# 测试产物
+test/tmp/
+
+# 文档查询缓存
+.context7/
+
+# WorkBuddy 本地会话与记忆数据
+.workbuddy/
+
+# SSH 隧道自动生成的指纹缓存（由 tools/share.mjs 产生）
+tools/known_hosts
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log
