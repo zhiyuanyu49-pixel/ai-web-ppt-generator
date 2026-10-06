@@ -6,6 +6,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { PROVIDER_DEFS, PROVIDER_ORDER } from './providers.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const ROOT_DIR = path.resolve(__dirname, '..');
@@ -50,13 +51,44 @@ function read(key, fallback = '') {
 
 const truthy = (v) => /^(1|true|yes|on)$/i.test(String(v || ''));
 
+/**
+ * 默认供应商：用 AI_PROVIDER 指定（deepseek / zhipu / kimi）。
+ * 非法值静默回退到 deepseek，保证老配置升级后依然可用。
+ */
+const requestedProviderId = String(read('AI_PROVIDER', 'deepseek') || 'deepseek').toLowerCase();
+export const defaultProviderId = PROVIDER_DEFS[requestedProviderId] ? requestedProviderId : 'deepseek';
+
+/**
+ * 各供应商的运行时配置：把「静态定义 + 环境变量」合并成一份即用对象。
+ * @type {Record<string, ReturnType<typeof buildProvider>>}
+ */
+function buildProvider(def) {
+  return {
+    ...def,
+    apiKey: read(def.envKey),
+    baseUrl: read(def.baseUrlEnv, def.defaultBaseUrl).replace(/\/+$/, ''),
+    model: read(def.modelEnv, def.defaultModel),
+    configured: Boolean(read(def.envKey)),
+  };
+}
+
+export const providers = Object.fromEntries(
+  PROVIDER_ORDER.map((id) => [id, buildProvider(PROVIDER_DEFS[id])]),
+);
+
+/** 至少有一家配置了 API Key（判断服务端能否真正生成） */
+export const hasAnyApiKey = PROVIDER_ORDER.some((id) => providers[id].configured);
+
+/** 默认供应商的即用配置 */
+export const defaultProvider = providers[defaultProviderId];
+
 export const config = {
   port: Number(read('PORT', '8787')),
   host: read('HOST', '127.0.0.1'),
-  apiKey: read('DEEPSEEK_API_KEY'),
-  baseUrl: read('DEEPSEEK_BASE_URL', 'https://api.deepseek.com/v1').replace(/\/+$/, ''),
-  /** 需求中指定的模型 id；启动时通过 /models 解析为真实可用 id */
-  model: read('DEEPSEEK_MODEL', 'deepseek-V41-Flash'),
+  // 以下三项指向「默认供应商」，保留是为了兼容既有代码与老的配置习惯
+  apiKey: defaultProvider.apiKey,
+  baseUrl: defaultProvider.baseUrl,
+  model: defaultProvider.model,
   requestTimeoutMs: Number(read('AI_TIMEOUT_MS', '300000')),
   /** 演示 / 自动化测试用的本地模拟模型（不消耗 API 额度） */
   mock: truthy(read('MOCK_AI', '0')),

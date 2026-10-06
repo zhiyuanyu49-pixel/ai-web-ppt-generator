@@ -2,8 +2,9 @@
  * 生成编排：把「用户文案 -> 流式大模型输出 -> 增量 slide 事件 -> 完整 deck」
  * 串成一条流水线，通过 emit(event, data) 回调把进度实时推给前端。
  */
-import { config } from './config.js';
-import { resolveModel, streamChat } from './ai.js';
+import { config, defaultProviderId } from './config.js';
+import { getProvider, resolveModel, streamChat } from './ai.js';
+import { normalizeProviderId } from './providers.js';
 import { buildMessages } from './prompt.js';
 import { buildMockDeck, streamMockJson } from './mock.js';
 import {
@@ -40,13 +41,19 @@ import {
 export async function generateDeck(input, emit, options = {}) {
   const { signal } = options;
   const startedAt = Date.now();
+  // 供应商：前端可指定（deepseek / zhipu / kimi），缺省用服务端默认的那家
+  const providerId = normalizeProviderId(input.provider, defaultProviderId);
+  const provider = getProvider(providerId);
+  const clientModel = String(input.model || '').trim();
   const text = String(input.text || '').slice(0, config.maxInputChars);
   const slideCount = Number(input.slideCount) || 0;
   const slidesExpected = slideCount > 0 ? slideCount : 0;
 
   emit('status', {
     phase: 'preparing',
-    message: config.mock ? '正在使用本地模拟模型生成…' : '正在准备提示词并连接大模型…',
+    message: config.mock
+      ? '正在使用本地模拟模型生成…'
+      : `正在准备提示词并连接 ${provider.label}…`,
   });
 
   const scanner = new SlideStreamScanner();
@@ -82,7 +89,13 @@ export async function generateDeck(input, emit, options = {}) {
 
   let rawContent = '';
   let usage = null;
-  let modelInfo = { requested: config.model, resolved: config.model, matchedBy: 'unknown' };
+  let modelUsed = '';
+  let modelInfo = {
+    requested: clientModel || provider.model,
+    resolved: clientModel || provider.model,
+    matchedBy: 'unknown',
+    provider: provider.id,
+  };
 
   // 思维链增量很多（实测一次生成可达 2000+ 个 delta），前端只需要「正在思考」的指示，
   // 因此按时间窗口聚合成较大的片段再推送，显著减少 SSE 事件数量。
@@ -99,12 +112,19 @@ export async function generateDeck(input, emit, options = {}) {
 
   if (config.mock) {
     const mockDeck = buildMockDeck({ text, slideCount, title: input.title });
-    modelInfo = { requested: config.model, resolved: 'mock-local-model', matchedBy: 'mock' };
+    modelInfo = {
+      requested: clientModel || provider.model,
+      resolved: `${provider.id}-mock-local`,
+      matchedBy: 'mock',
+      provider: provider.id,
+    };
     emit('meta', {
       requestedModel: modelInfo.requested,
       resolvedModel: modelInfo.resolved,
       matchedBy: 'mock',
       mock: true,
+      provider: provider.id,
+      providerLabel: provider.label,
       slidesExpected: mockDeck.slideCount,
     });
     emit('status', { phase: 'streaming', message: '模型正在流式输出结构…' });
@@ -114,19 +134,33 @@ export async function generateDeck(input, emit, options = {}) {
       consume(piece);
     }
   } else {
-    const resolved = await resolveModel();
-    modelInfo = resolved;
+    const resolved = await resolveModel(provider.id);
+    // 前端显式指定了模型就直接用，避免拿别家的 id 去本家的模型列表里做解析
+    const useModel = clientModel || resolved.resolved;
+    modelInfo = {
+      requested: clientModel || resolved.requested,
+      resolved: useModel,
+      matchedBy: clientModel ? 'client-specified' : resolved.matchedBy,
+      provider: provider.id,
+    };
     emit('meta', {
-      requestedModel: resolved.requested,
-      resolvedModel: resolved.resolved,
-      matchedBy: resolved.matchedBy,
+      requestedModel: modelInfo.requested,
+      resolvedModel: useModel,
+      matchedBy: modelInfo.matchedBy,
       mock: false,
+      provider: provider.id,
+      providerLabel: provider.label,
       slidesExpected,
     });
-    emit('status', { phase: 'streaming', message: `已连接 ${resolved.resolved}，正在流式生成结构…` });
+    emit('status', {
+      phase: 'streaming',
+      message: `已连接 ${provider.label} · ${useModel}，正在流式生成结构…`,
+    });
 
     const messages = buildMessages({ text, slideCount, language: input.language, style: input.style, title: input.title });
     const result = await streamChat({
+      provider: provider.id,
+      model: clientModel || undefined,
       messages,
       temperature: 0.65,
       maxTokens: 8192,
@@ -143,6 +177,7 @@ export async function generateDeck(input, emit, options = {}) {
       },
     });
     usage = result.usage;
+    modelUsed = result.model;
   }
 
   flushThinking(true);
@@ -172,9 +207,11 @@ export async function generateDeck(input, emit, options = {}) {
 
   deck.meta = {
     ...deck.meta,
-    model: modelInfo.resolvedModel || modelInfo.resolved,
+    model: modelUsed || modelInfo.resolvedModel || modelInfo.resolved,
     requestedModel: modelInfo.requested || modelInfo.requestedModel,
     matchedBy: modelInfo.matchedBy,
+    provider: provider.id,
+    providerLabel: provider.label,
     mock: Boolean(config.mock),
     elapsedMs: Date.now() - startedAt,
     repaired,

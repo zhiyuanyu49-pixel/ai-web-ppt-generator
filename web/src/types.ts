@@ -77,12 +77,35 @@ export interface Theme {
 export type StyleId = 'business' | 'tech' | 'edu' | 'creative' | 'report';
 export type LanguageId = 'zh' | 'en' | 'auto';
 
+export type ProviderId = 'deepseek' | 'zhipu' | 'kimi';
+
+/** 供应商下拉里的一个候选模型 */
+export interface ModelOption {
+  id: string;
+  name: string;
+  note?: string;
+}
+
+/** 健康检查返回的供应商信息（不含任何密钥） */
+export interface ProviderOption {
+  id: ProviderId;
+  label: string;
+  configured: boolean;
+  needsKeyEnv?: string;
+  models: ModelOption[];
+  defaultModel: string;
+}
+
 export interface GenerateInput {
   text: string;
   title?: string;
   slideCount?: number;
   language?: LanguageId;
   style?: StyleId;
+  /** 模型供应商，缺省由服务端默认配置决定 */
+  provider?: ProviderId;
+  /** 模型 id，缺省使用该供应商的默认模型 */
+  model?: string;
 }
 
 export interface ProgressState {
@@ -100,6 +123,8 @@ export interface ModelInfo {
   matchedBy?: string;
   mock?: boolean;
   slidesExpected?: number;
+  provider?: ProviderId;
+  providerLabel?: string;
 }
 
 export interface HealthInfo {
@@ -110,6 +135,8 @@ export interface HealthInfo {
   requestedModel: string;
   resolvedModel: string;
   matchedBy: string;
+  provider: string;
+  providers: ProviderOption[];
   themes: string[];
 }
 

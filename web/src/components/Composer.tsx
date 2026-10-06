@@ -1,6 +1,6 @@
 /** 文案输入与生成参数面板 */
 import { useMemo } from 'react';
-import type { LanguageId, StyleId } from '../types';
+import type { LanguageId, ModelOption, ProviderId, ProviderOption, StyleId } from '../types';
 
 const STYLE_OPTIONS: { id: StyleId; label: string; hint: string }[] = [
   { id: 'business', label: '商务汇报', hint: '结论先行、数据支撑' },
@@ -24,12 +24,17 @@ export interface ComposerProps {
   slideCount: number;
   language: LanguageId;
   style: StyleId;
+  providers: ProviderOption[];
+  provider: ProviderId;
+  model: string;
   running: boolean;
   onTextChange: (value: string) => void;
   onTitleChange: (value: string) => void;
   onSlideCountChange: (value: number) => void;
   onLanguageChange: (value: LanguageId) => void;
   onStyleChange: (value: StyleId) => void;
+  onProviderChange: (value: ProviderId) => void;
+  onModelChange: (value: string) => void;
   onGenerate: () => void;
   onCancel: () => void;
   onSample: () => void;
@@ -45,12 +50,17 @@ export function Composer(props: ComposerProps) {
     slideCount,
     language,
     style,
+    providers,
+    provider,
+    model,
     running,
     onTextChange,
     onTitleChange,
     onSlideCountChange,
     onLanguageChange,
     onStyleChange,
+    onProviderChange,
+    onModelChange,
     onGenerate,
     onCancel,
     onSample,
@@ -61,6 +71,22 @@ export function Composer(props: ComposerProps) {
 
   const charCount = text.trim().length;
   const canGenerate = charCount >= 20 && !running;
+
+  // 当前供应商及其模型候选；未配置 Key 的供应商在下拉里置灰
+  const activeProvider = providers.find((item) => item.id === provider) ?? null;
+  const modelChoices = useMemo<ModelOption[]>(() => {
+    const list: ModelOption[] = (activeProvider?.models ?? []).map((item) => ({
+      id: item.id,
+      name: item.name,
+      note: item.note,
+    }));
+    // 服务端允许使用未登记的模型 id，选中时要能正确显示
+    if (model && !list.some((item) => item.id === model)) {
+      list.unshift({ id: model, name: model, note: '自定义' });
+    }
+    if (!list.length) list.push({ id: model || '', name: model || '读取配置中…' });
+    return list;
+  }, [activeProvider, model]);
   const estimate = useMemo(() => {
     if (slideCount > 0) return `${slideCount} 页`;
     const guess = Math.min(16, Math.max(6, Math.round(charCount / 260) + 3));
@@ -108,6 +134,45 @@ export function Composer(props: ComposerProps) {
             {COUNT_OPTIONS.map((count) => (
               <option key={count} value={count}>
                 {count === 0 ? '自动' : `${count} 页`}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+
+      <div className="composer__row">
+        <label className="field">
+          <span className="field__label">模型供应商</span>
+          <select
+            className="field__input"
+            value={provider}
+            onChange={(event) => onProviderChange(event.target.value as ProviderId)}
+            disabled={running}
+          >
+            {providers.length ? (
+              providers.map((option) => (
+                <option key={option.id} value={option.id} disabled={!option.configured}>
+                  {option.label}
+                  {option.configured ? '' : `（未配置 ${option.needsKeyEnv || 'API Key'}）`}
+                </option>
+              ))
+            ) : (
+              <option value="deepseek">DeepSeek</option>
+            )}
+          </select>
+        </label>
+        <label className="field field--grow">
+          <span className="field__label">模型</span>
+          <select
+            className="field__input"
+            value={model}
+            onChange={(event) => onModelChange(event.target.value)}
+            disabled={running}
+          >
+            {modelChoices.map((choice) => (
+              <option key={choice.id || choice.name} value={choice.id}>
+                {choice.name}
+                {choice.note ? ` · ${choice.note}` : ''}
               </option>
             ))}
           </select>

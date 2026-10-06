@@ -16,8 +16,9 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import express from 'express';
-import { config, hasApiKey, ROOT_DIR } from './config.js';
-import { resolveModel } from './ai.js';
+import { config, defaultProviderId, hasAnyApiKey, providers, ROOT_DIR } from './config.js';
+import { getProvider, resolveModel } from './ai.js';
+import { PROVIDER_ORDER, normalizeProviderId } from './providers.js';
 import { generateDeck } from './generate.js';
 import { buildExportHtml } from './export.js';
 import { THEMES } from '../shared/themes.js';
@@ -89,15 +90,32 @@ export function createApp() {
 
   // --------------------------- 健康检查（公开，便于探活/监控） ---------------------------
   app.get('/api/health', async (_req, res) => {
-    const model = config.mock ? { requested: config.model, resolved: 'mock-local-model', matchedBy: 'mock' } : await resolveModel();
+    const model = config.mock
+      ? { requested: config.model, resolved: 'mock-local-model', matchedBy: 'mock' }
+      : await resolveModel(defaultProviderId);
     res.json({
       ok: true,
-      hasApiKey,
+      hasApiKey: hasAnyApiKey,
       mock: config.mock,
       baseUrl: config.baseUrl,
       requestedModel: model.requested,
       resolvedModel: model.resolved,
       matchedBy: model.matchedBy,
+      provider: defaultProviderId,
+      // 供应商清单：前端据此渲染「供应商 + 模型」下拉。
+      // 只回传展示所需的字段，绝不返回 apiKey 等凭据。
+      providers: PROVIDER_ORDER.map((id) => {
+        const p = providers[id];
+        return {
+          id: p.id,
+          label: p.label,
+          // MOCK 模式下全部视为可用，便于离线演示与自动化测试
+          configured: Boolean(p.configured) || config.mock,
+          needsKeyEnv: p.envKey,
+          models: p.models,
+          defaultModel: p.model,
+        };
+      }),
       themes: THEMES.map((t) => t.id),
       authRequired: authEnabled(),
       usage: usageSnapshot(),
@@ -128,8 +146,19 @@ export function createApp() {
       res.status(400).json({ error: '文案太短了，请至少输入 20 个字的内容。' });
       return;
     }
-    if (!config.mock && !hasApiKey) {
-      res.status(500).json({ error: '服务端未配置 DEEPSEEK_API_KEY，请在 .env 中配置后重启。' });
+    // 供应商：前端可选 deepseek / zhipu / kimi，缺省用服务端默认的那家
+    const providerId = normalizeProviderId(body.provider, defaultProviderId);
+    const provider = getProvider(providerId);
+    if (!config.mock && !hasAnyApiKey) {
+      res.status(500).json({
+        error: '服务端尚未配置任何模型的 API Key，请在 .env 中填写至少一家（DEEPSEEK / ZHIPU / KIMI）后重启服务。',
+      });
+      return;
+    }
+    if (!config.mock && !provider.configured) {
+      res.status(400).json({
+        error: `还没有配置「${provider.label}」的 API Key。请在 .env 中补充 ${provider.envKey} 后重启服务，或换用其他已配置的模型供应商。`,
+      });
       return;
     }
 
@@ -148,6 +177,9 @@ export function createApp() {
       slideCount: Math.max(0, Math.min(config.maxSlides, Number(body.slideCount) || 0)),
       language: ['zh', 'en', 'auto'].includes(body.language) ? body.language : 'zh',
       style: ['business', 'tech', 'edu', 'creative', 'report'].includes(body.style) ? body.style : 'business',
+      provider: providerId,
+      // 允许指定未在下拉里列出的新模型，但限制长度，避免异常输入
+      model: String(body.model || '').trim().slice(0, 64),
     };
 
     res.status(200);
@@ -317,8 +349,18 @@ if (isMain) {
       }
       console.log('  ➜ 公网分享: npm run share  （生成一次性 https 链接）');
     }
-    console.log(`  ➜ 模型: ${model.resolved}${model.matchedBy === 'normalized-name' ? `（由 ${config.model} 解析而来）` : ''}`);
-    console.log(`  ➜ 模式: ${config.mock ? 'MOCK 本地模拟' : 'DeepSeek 真实调用'}${fs.existsSync(config.distDir) ? '' : ' · 前端未构建（npm run build）'}`);
+    const readyProviders = PROVIDER_ORDER.filter((id) => providers[id].configured).map(
+      (id) => providers[id].label,
+    );
+    console.log(
+      `  ➜ 默认模型: ${providers[defaultProviderId].label} · ${model.resolved}${
+        model.matchedBy === 'normalized-name' ? `（由 ${config.model} 解析而来）` : ''
+      }`,
+    );
+    console.log(
+      `  ➜ 可用供应商: ${readyProviders.length ? readyProviders.join('、') : '无（请在 .env 中配置 API Key）'}`,
+    );
+    console.log(`  ➜ 模式: ${config.mock ? 'MOCK 本地模拟' : '真实调用'}${fs.existsSync(config.distDir) ? '' : ' · 前端未构建（npm run build）'}`);
     console.log(
       `  ➜ 访问口令: ${
         authEnabled() ? `已启用（每 IP 每天 ${config.ratePerDay} 次 / 每分钟 ${config.ratePerMinute} 次）` : '未启用（本机使用）'

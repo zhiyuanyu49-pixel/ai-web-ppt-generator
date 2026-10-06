@@ -2,8 +2,8 @@
 
 粘贴一段长文案 → 后端**流式**调用大模型（OpenAI 兼容协议）拆解为多页结构 → 前端**实时**渲染成可全屏演示、可键盘翻页的网页 PPT，支持 **6 套配色主题**与**一键导出独立 HTML**。
 
-- 模型：`https://api.deepseek.com/v1`（OpenAI 兼容），模型 id `deepseek-V41-Flash`
-  服务端会通过 `/models` 自动解析为真实可用 id（`DeepSeek-V4.1-Flash` → `deepseek-flash`），并在页头显示解析结果。
+- 模型：默认 DeepSeek，同时支持**智谱 GLM** 与 **Kimi**，三家都是 OpenAI 兼容协议，
+  可以同时配置、在页面下拉里随时切换。服务端会通过 `/models` 自动解析真实可用 id，并在页头显示结果。
 - 全栈：Node.js + Express 5（SSE 流式接口）+ React 19 + Vite 8 + TypeScript
 - 零外部 SDK：大模型调用用原生 `fetch` 手写 SSE 解析；导出文件不依赖任何 CDN / 网络资源
 
@@ -54,6 +54,7 @@ node test/demo-case.mjs   # 用真实模型跑通「校园咖啡店创业计划�
 
 | 能力 | 说明 |
 | --- | --- |
+| 多模型供应商 | DeepSeek / 智谱 GLM / Kimi 三家可选，配了几家下拉就出现几家（未配 Key 的自动置灰）；切换供应商时模型列表同步更新 |
 | 长文案 → PPT 结构 | 自动提炼标题、分层要点，并选择合适版式（封面/章节/要点/两栏/数据/时间线/金句/结尾） |
 | 流式输出 + 实时进度 | SSE 事件流：进度条、已完成页数、接收字符数、耗时、模型原始 JSON 流、**每完成一页立即出现缩略图** |
 | 全屏演示 | 16:9 舞台自适应缩放（容器查询 + `cqw` 字号），键盘/点击/触摸滑动/滚轮翻页 |
@@ -64,6 +65,24 @@ node test/demo-case.mjs   # 用真实模型跑通「校园咖啡店创业计划�
 | 导出 / 复制 JSON | 便于二次加工或接入其它渲染器 |
 | 响应式 | 桌面双栏、平板/手机单栏；移动端无横向溢出，支持触摸滑动 |
 | 容错 | 模型输出被截断/含多余文字/尾随逗号均会自动修复；增量解析失败时降级使用已生成页面 |
+
+### 模型供应商（DeepSeek / 智谱 GLM / Kimi）
+
+三家都是 OpenAI 兼容协议，差异只在 Key、端点和模型 id，所以可以同时配置，在页面下拉里随时切换：
+
+| 供应商 | 环境变量前缀 | 默认端点 | 推荐模型 |
+| --- | --- | --- | --- |
+| DeepSeek | `DEEPSEEK_` | `https://api.deepseek.com/v1` | `deepseek-flash` |
+| 智谱 GLM | `ZHIPU_` | `https://open.bigmodel.cn/api/paas/v4` | `glm-4.7` |
+| Kimi | `KIMI_` | `https://api.moonshot.cn/v1` | `kimi-k2.5` |
+
+每家需要三个变量：`*_API_KEY`、`*_BASE_URL`、`*_MODEL`（后两个可省略，会用上表的默认值）。
+配了几家，下拉里就出现几家；没配 Key 的会标注缺失的环境变量名并置灰。
+用 `AI_PROVIDER=zhipu` 可以指定打开页面时默认选中哪家。
+
+- 智谱国际站把 `ZHIPU_BASE_URL` 改成 `https://api.z.ai/api/paas/v4`
+- Kimi 国际站把 `KIMI_BASE_URL` 改成 `https://api.moonshot.ai/v1`
+- 想接其它 OpenAI 兼容服务（自建 vLLM、通义、豆包等），在 `server/providers.js` 里照格式加一条即可，调用层零改动
 
 ### 演示快捷键
 
@@ -76,7 +95,8 @@ node test/demo-case.mjs   # 用真实模型跑通「校园咖啡店创业计划�
 ├── server/                  # 后端
 │   ├── index.js             # Express 应用 + API 路由 + SPA 托管
 │   ├── config.js            # .env 加载与配置
-│   ├── ai.js                # DeepSeek 客户端（流式 SSE 解析 + 模型 id 解析）
+│   ├── ai.js                # 多供应商 OpenAI 兼容客户端（流式 SSE 解析 + 模型 id 解析）
+│   ├── providers.js         # 供应商元数据：DeepSeek / 智谱 GLM / Kimi 的端点与模型清单
 │   ├── prompt.js            # 提示词工程（严格 JSON 契约 + 版式白名单）
 │   ├── deck.js              # JSON 修复/规范化 + 流式增量页面扫描器
 │   ├── generate.js          # 生成编排：串起 token → slide → deck 事件
@@ -102,17 +122,20 @@ node test/demo-case.mjs   # 用真实模型跑通「校园咖啡店创业计划�
 
 | 方法 | 路径 | 说明 |
 | --- | --- | --- |
-| GET | `/api/health` | 服务状态、模型解析结果、主题列表 |
+| GET | `/api/health` | 服务状态、模型解析结果、**可用供应商与候选模型清单**、主题列表 |
 | GET | `/api/themes` | 主题与令牌 |
 | GET | `/api/deck/sample` | 内置示例长文案 |
-| POST | `/api/generate` | **SSE 流式生成**，请求体：`{text, title?, slideCount?, language?, style?}` |
+| POST | `/api/generate` | **SSE 流式生成**，请求体：`{text, title?, slideCount?, language?, style?, provider?, model?}` |
 | POST | `/api/export` | 导出独立 HTML，请求体：`{deck, theme?, notes?}` |
+
+`provider` 取值：`deepseek` | `zhipu` | `kimi`，缺省用服务端 `AI_PROVIDER`；
+`model` 为该供应商下的模型 id，缺省用其默认模型。选了没配 Key 的供应商会返回 400 并提示缺哪个环境变量。
 
 `/api/generate` 事件序列：
 
 ```
 status   {phase, message}            阶段提示（preparing / streaming / parsing）
-meta     {requestedModel, resolvedModel, matchedBy, slidesExpected}
+meta     {requestedModel, resolvedModel, matchedBy, provider, providerLabel, slidesExpected}
 thinking {text}                      模型思维链增量（按 200ms 聚合）
 token    {text}                      JSON 文本增量
 progress {slidesDone, slidesExpected, chars, elapsedMs}
@@ -199,9 +222,9 @@ node test/share-browser-check.mjs https://xxx.lhr.life 你的口令   # 浏览�
 
 ## 8. 说明与已知边界
 
-- **模型 id**：需求给的 `deepseek-V41-Flash` 并非接口里的真实 id，服务端按
-  「精确 → 忽略大小写 → 规范化（id/展示名）」三级匹配解析为 `deepseek-flash`；
-  若想直接指定，可在 `.env` 中改 `DEEPSEEK_MODEL=deepseek-flash`。
+- **模型 id**：每家的默认 id 见 `server/providers.js`，一般用推荐值即可；想在下拉之外尝鲜，
+  可以在请求里直接传任意 `model` 字符串（长度限制 64），服务端不做白名单校验。
+  若填写的 id 与服务端 `/models` 列表不一致，会按「精确 → 忽略大小写 → 规范化」三级匹配自动纠正。
 - **成本**：一次 12 页生成约 1.3k 输入 token + 3.8k 输出 token（含思维链）。
   后端对思维链事件做了聚合，减少 SSE 事件量。
 - **输入长度**：默认截断到 14000 字符（`MAX_INPUT_CHARS`），可按需放宽。

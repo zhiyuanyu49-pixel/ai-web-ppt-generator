@@ -1,15 +1,29 @@
 /**
- * DeepSeek（OpenAI 兼容协议）客户端
+ * 大模型客户端（OpenAI 兼容协议）
  * ------------------------------------------------------------------
  * - 纯 fetch 实现，无第三方 SDK
  * - 支持流式（SSE）输出，逐 token 回调
- * - 支持把「需求指定的模型 id」解析成 /models 中真实存在的 id
+ * - 支持多家供应商：DeepSeek / 智谱 GLM / Kimi（见 server/providers.js）
+ * - 支持把「请求中的模型 id」解析成 /models 中真实存在的 id
+ *
+ * 所有供应商共用同一套 SSE 解析逻辑；缓存按供应商隔离，避免串用。
  */
-import { config } from './config.js';
+import { config, defaultProviderId, providers } from './config.js';
+import { getProviderDef } from './providers.js';
 
-/** @type {{id:string,name:string}[]|null} */
-let cachedModels = null;
-let resolvedModel = null;
+/** @type {Map<string, {id:string,name:string}[]>} 供应商 id -> 模型列表 */
+const modelCache = new Map();
+/** @type {Map<string, {requested:string,resolved:string,matchedBy:string,provider:string}>} */
+const resolvedCache = new Map();
+
+/**
+ * 取某个供应商的运行时配置，未知 id 回退到默认供应商。
+ * @param {string} [id]
+ */
+export function getProvider(id) {
+  const key = String(id || '').toLowerCase();
+  return providers[key] || providers[defaultProviderId];
+}
 
 /**
  * 规范化模型名：去掉大小写、连字符、点、空格等差异，便于模糊匹配。
@@ -23,75 +37,95 @@ export function normalizeModelName(value) {
 }
 
 /**
- * 拉取模型列表（带内存缓存）。
+ * 拉取模型列表（按供应商缓存）。
+ * @param {string} [providerId]
  * @param {{force?:boolean}} [options]
  * @returns {Promise<{id:string,name:string}[]>}
  */
-export async function listModels(options = {}) {
-  if (cachedModels && !options.force) return cachedModels;
-  const response = await fetch(`${config.baseUrl}/models`, {
-    headers: { Authorization: `Bearer ${config.apiKey}` },
+export async function listModels(providerId, options = {}) {
+  const provider = getProvider(providerId);
+  if (modelCache.has(provider.id) && !options.force) return modelCache.get(provider.id);
+  const response = await fetch(`${provider.baseUrl}/models`, {
+    headers: { Authorization: `Bearer ${provider.apiKey}` },
     signal: AbortSignal.timeout(20000),
   });
   if (!response.ok) {
     const text = await response.text().catch(() => '');
-    throw new Error(`获取模型列表失败（HTTP ${response.status}）${text ? `：${text.slice(0, 200)}` : ''}`);
+    throw new Error(
+      `获取 ${provider.label} 模型列表失败（HTTP ${response.status}）${text ? `：${text.slice(0, 200)}` : ''}`,
+    );
   }
   const data = await response.json();
-  cachedModels = (data?.data || []).map((m) => ({ id: m.id, name: m.name || m.id }));
-  return cachedModels;
+  const list = (data?.data || []).map((m) => ({ id: m.id, name: m.name || m.id }));
+  modelCache.set(provider.id, list);
+  return list;
 }
 
 /**
- * 把配置中的模型 id 解析成真实可用 id。
+ * 把某个供应商配置中的模型 id 解析成真实可用 id。
  * 依次尝试：精确匹配 -> 忽略大小写 -> 规范化匹配（id 或展示名）。
- * @returns {Promise<{requested:string,resolved:string,matchedBy:string}>}
+ * @param {string} [providerId]
+ * @returns {Promise<{requested:string,resolved:string,matchedBy:string,provider:string}>}
  */
-export async function resolveModel() {
-  const requested = config.model;
-  if (resolvedModel) return resolvedModel;
+export async function resolveModel(providerId) {
+  const provider = getProvider(providerId);
+  const requested = provider.model;
   if (config.mock) {
-    resolvedModel = { requested, resolved: requested, matchedBy: 'mock' };
-    return resolvedModel;
+    const mocked = { requested, resolved: requested, matchedBy: 'mock', provider: provider.id };
+    resolvedCache.set(provider.id, mocked);
+    return mocked;
   }
+  if (resolvedCache.has(provider.id)) return resolvedCache.get(provider.id);
   try {
-    const models = await listModels();
+    const models = await listModels(provider.id);
     const exact = models.find((m) => m.id === requested);
     if (exact) {
-      resolvedModel = { requested, resolved: exact.id, matchedBy: 'exact' };
-      return resolvedModel;
+      const hit = { requested, resolved: exact.id, matchedBy: 'exact', provider: provider.id };
+      resolvedCache.set(provider.id, hit);
+      return hit;
     }
     const lower = models.find((m) => m.id.toLowerCase() === requested.toLowerCase());
     if (lower) {
-      resolvedModel = { requested, resolved: lower.id, matchedBy: 'case-insensitive' };
-      return resolvedModel;
+      const hit = { requested, resolved: lower.id, matchedBy: 'case-insensitive', provider: provider.id };
+      resolvedCache.set(provider.id, hit);
+      return hit;
     }
     const target = normalizeModelName(requested);
     const fuzzy = models.find(
       (m) => normalizeModelName(m.id) === target || normalizeModelName(m.name) === target,
     );
     if (fuzzy) {
-      resolvedModel = { requested, resolved: fuzzy.id, matchedBy: 'normalized-name' };
-      return resolvedModel;
+      const hit = { requested, resolved: fuzzy.id, matchedBy: 'normalized-name', provider: provider.id };
+      resolvedCache.set(provider.id, hit);
+      return hit;
     }
     // 解析不到就原样使用，交给服务端报错，同时记录可用列表便于排查
-    resolvedModel = {
+    const fallback = {
       requested,
       resolved: requested,
       matchedBy: 'fallback',
+      provider: provider.id,
       available: models.map((m) => m.id),
     };
-    return resolvedModel;
+    resolvedCache.set(provider.id, fallback);
+    return fallback;
   } catch (error) {
-    resolvedModel = { requested, resolved: requested, matchedBy: 'error', error: String(error?.message || error) };
-    return resolvedModel;
+    const failed = {
+      requested,
+      resolved: requested,
+      matchedBy: 'error',
+      provider: provider.id,
+      error: String(error?.message || error),
+    };
+    resolvedCache.set(provider.id, failed);
+    return failed;
   }
 }
 
 /** 仅供测试重置缓存 */
 export function __resetModelCache() {
-  cachedModels = null;
-  resolvedModel = null;
+  modelCache.clear();
+  resolvedCache.clear();
 }
 
 /**
@@ -120,12 +154,13 @@ function parseSseChunk(chunk, onEvent) {
  *
  * @param {Object} options
  * @param {Array<{role:string,content:string}>} options.messages
+ * @param {string} [options.provider]  供应商 id，缺省用默认供应商
+ * @param {string} [options.model]     覆写的模型 id，缺省用解析后的 id
  * @param {number} [options.temperature]
  * @param {number} [options.maxTokens]
- * @param {string} [options.model]
  * @param {AbortSignal} [options.signal]
  * @param {(delta:{content?:string,reasoning?:string}) => void} [options.onDelta]
- * @returns {Promise<{content:string,reasoning:string,usage:any,finishReason:string|null,model:string}>}
+ * @returns {Promise<{content:string,reasoning:string,usage:any,finishReason:string|null,model:string,provider:string}>}
  */
 export async function streamChat(options) {
   const {
@@ -135,9 +170,13 @@ export async function streamChat(options) {
     signal,
     onDelta,
     model,
+    provider: providerId,
   } = options;
 
-  const { resolved } = await resolveModel();
+  const provider = getProvider(providerId);
+  const def = getProviderDef(provider.id);
+
+  const { resolved } = await resolveModel(provider.id);
   const useModel = model || resolved;
 
   const body = {
@@ -152,11 +191,11 @@ export async function streamChat(options) {
   const timeoutSignal = AbortSignal.timeout(config.requestTimeoutMs);
   const combinedSignal = signal ? AbortSignal.any([signal, timeoutSignal]) : timeoutSignal;
 
-  const response = await fetch(`${config.baseUrl}/chat/completions`, {
+  const response = await fetch(`${provider.baseUrl}/chat/completions`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${config.apiKey}`,
+      Authorization: `Bearer ${provider.apiKey}`,
       Accept: 'text/event-stream',
     },
     body: JSON.stringify(body),
@@ -171,7 +210,9 @@ export async function streamChat(options) {
     } catch {
       /* 保留原始文本 */
     }
-    throw new Error(`大模型接口返回 HTTP ${response.status}：${String(message).slice(0, 400)}`);
+    throw new Error(
+      `${provider.label} 接口返回 HTTP ${response.status}：${String(message).slice(0, 400)}`,
+    );
   }
 
   const decoder = new TextDecoder('utf-8');
@@ -196,6 +237,7 @@ export async function streamChat(options) {
       if (!choice) return;
       if (choice.finish_reason) finishReason = choice.finish_reason;
       const delta = choice.delta || {};
+      // 智谱与 DeepSeek 的思维链都在 reasoning_content 字段里，Kimi K2 亦兼容该约定
       if (typeof delta.reasoning_content === 'string' && delta.reasoning_content) {
         reasoning += delta.reasoning_content;
         onDelta?.({ reasoning: delta.reasoning_content });
@@ -221,8 +263,8 @@ export async function streamChat(options) {
   if (buffer.trim()) handleBlock(buffer);
 
   if (!content.trim() && !reasoning.trim()) {
-    throw new Error('大模型没有返回任何内容，请重试或检查模型配置。');
+    throw new Error(`${provider.label}（${useModel}）没有返回任何内容，请重试或检查模型配置。`);
   }
 
-  return { content, reasoning, usage, finishReason, model: useModel };
+  return { content, reasoning, usage, finishReason, model: useModel, provider: provider.id, providerLabel: def.label };
 }

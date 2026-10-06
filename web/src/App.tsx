@@ -14,7 +14,18 @@ import {
 } from './lib/api';
 import { THEMES as FALLBACK_THEMES, getTheme } from '../../shared/themes.js';
 import type { CSSProperties } from 'react';
-import type { HealthInfo, LanguageId, StyleId, Theme } from './types';
+import type { HealthInfo, LanguageId, ProviderId, ProviderOption, StyleId, Theme } from './types';
+
+/**
+ * 取供应商的默认模型。
+ * 服务端给的默认值（来自 .env）若在候选清单里不存在——比如老配置写了别名
+ * `deepseek-V41-Flash`——就回退到清单第一项，避免下拉显示出一个孤零零的选项。
+ */
+function pickDefaultModel(provider?: ProviderOption): string {
+  if (!provider) return '';
+  if (provider.models.some((item) => item.id === provider.defaultModel)) return provider.defaultModel;
+  return provider.models[0]?.id ?? '';
+}
 
 type View = 'compose' | 'present';
 
@@ -24,6 +35,8 @@ export default function App() {
   const [slideCount, setSlideCount] = useState(0);
   const [language, setLanguage] = useState<LanguageId>('zh');
   const [style, setStyle] = useState<StyleId>('business');
+  const [provider, setProvider] = useState<ProviderId>('deepseek');
+  const [model, setModel] = useState<string>('');
 
   const [themes, setThemes] = useState<Theme[]>(FALLBACK_THEMES as Theme[]);
   const [theme, setTheme] = useState<string>(() => {
@@ -74,6 +87,17 @@ export default function App() {
     };
   }, []);
 
+  // 服务连通后，默认选中第一个「已配置 Key」的供应商及其推荐模型（只做一次）
+  const providerPickedRef = useRef(false);
+  useEffect(() => {
+    const list = health?.providers;
+    if (!list?.length || providerPickedRef.current) return;
+    const first = list.find((item) => item.configured) ?? list[0];
+    providerPickedRef.current = true;
+    setProvider(first.id);
+    setModel(pickDefaultModel(first));
+  }, [health]);
+
   // 主题持久化 + 同步到 body（避免滚动越界时露出底色）
   useEffect(() => {
     try {
@@ -95,10 +119,20 @@ export default function App() {
     return undefined;
   }, [status, deck]);
 
+  const handleProviderChange = useCallback(
+    (next: ProviderId) => {
+      setProvider(next);
+      // 切换供应商时同步到该供应商的推荐模型，避免拿 A 家的 id 去调 B 家
+      const target = health?.providers?.find((item) => item.id === next);
+      setModel(pickDefaultModel(target));
+    },
+    [health],
+  );
+
   const handleGenerate = useCallback(() => {
     setView('compose');
-    void start({ text, title, slideCount, language, style });
-  }, [language, slideCount, start, style, text, title]);
+    void start({ text, title, slideCount, language, style, provider, model });
+  }, [language, model, provider, slideCount, start, style, text, title]);
 
   const handleSample = useCallback(async () => {
     const sample = await fetchSampleText();
@@ -216,6 +250,9 @@ export default function App() {
               slideCount={slideCount}
               language={language}
               style={style}
+              providers={health?.providers ?? []}
+              provider={provider}
+              model={model}
               running={status === 'running'}
               hasDeck={Boolean(deck)}
               onTextChange={setText}
@@ -223,6 +260,8 @@ export default function App() {
               onSlideCountChange={setSlideCount}
               onLanguageChange={setLanguage}
               onStyleChange={setStyle}
+              onProviderChange={handleProviderChange}
+              onModelChange={setModel}
               onGenerate={handleGenerate}
               onCancel={cancel}
               onSample={handleSample}
